@@ -95,80 +95,6 @@ function drawScene() {
     //  * draw line
 }
 
-// Get outcode for vertex (parallel view volume)
-function outcodeParallel(vertex) {
-    let outcode = 0;
-    if (vertex.x < (-1.0 - FLOAT_EPSILON)) {
-        outcode += LEFT;
-    }
-    else if (vertex.x > (1.0 + FLOAT_EPSILON)) {
-        outcode += RIGHT;
-    }
-    if (vertex.y < (-1.0 - FLOAT_EPSILON)) {
-        outcode += BOTTOM;
-    }
-    else if (vertex.y > (1.0 + FLOAT_EPSILON)) {
-        outcode += TOP;
-    }
-    if (vertex.x < (-1.0 - FLOAT_EPSILON)) {
-        outcode += FAR;
-    }
-    else if (vertex.x > (0.0 + FLOAT_EPSILON)) {
-        outcode += NEAR;
-    }
-    return outcode;
-}
-
-// Get outcode for vertex (perspective view volume)
-function outcodePerspective(vertex, z_min) {
-    let outcode = 0;
-    if (vertex.x < (vertex.z - FLOAT_EPSILON)) {
-        outcode += LEFT;
-    }
-    else if (vertex.x > (-vertex.z + FLOAT_EPSILON)) {
-        outcode += RIGHT;
-    }
-    if (vertex.y < (vertex.z - FLOAT_EPSILON)) {
-        outcode += BOTTOM;
-    }
-    else if (vertex.y > (-vertex.z + FLOAT_EPSILON)) {
-        outcode += TOP;
-    }
-    if (vertex.x < (-1.0 - FLOAT_EPSILON)) {
-        outcode += FAR;
-    }
-    else if (vertex.x > (z_min + FLOAT_EPSILON)) {
-        outcode += NEAR;
-    }
-    return outcode;
-}
-
-// Clip line - should either return a new line (with two endpoints inside view volume) or null (if line is completely outside view volume)
-function clipLineParallel(line) {
-    let result = null;
-    let p0 = Vector3(line.pt0.x, line.pt0.y, line.pt0.z); 
-    let p1 = Vector3(line.pt1.x, line.pt1.y, line.pt1.z);
-    let out0 = outcodeParallel(p0);
-    let out1 = outcodeParallel(p1);
-    
-    // TODO: implement clipping here!
-    
-    return result;
-}
-
-// Clip line - should either return a new line (with two endpoints inside view volume) or null (if line is completely outside view volume)
-function clipLinePerspective(line, z_min) {
-    let result = null;
-    let p0 = Vector3(line.pt0.x, line.pt0.y, line.pt0.z); 
-    let p1 = Vector3(line.pt1.x, line.pt1.y, line.pt1.z);
-    let out0 = outcodePerspective(p0, z_min);
-    let out1 = outcodePerspective(p1, z_min);
-    
-    // TODO: implement clipping here!
-    
-    return result;
-}
-
 // Called when user presses a key on the keyboard down 
 function onKeyDown(event) {
     switch (event.keyCode) {
@@ -198,48 +124,47 @@ function onKeyDown(event) {
 ///////////////////////////////////////////////////////////////////////////
 
 // Called when user selects a new scene JSON file
-function loadNewScene() {
-    let scene_file = document.getElementById('scene_file');
+    function loadNewScene() {
+        let scene_file = document.getElementById('scene_file');
 
-    console.log(scene_file.files[0]);
+        console.log(scene_file.files[0]);
 
-    let reader = new FileReader();
-    reader.onload = (event) => {
-        scene = JSON.parse(event.target.result);
-        scene.view.prp = Vector3(scene.view.prp[0], scene.view.prp[1], scene.view.prp[2]);
-        scene.view.srp = Vector3(scene.view.srp[0], scene.view.srp[1], scene.view.srp[2]);
-        scene.view.vup = Vector3(scene.view.vup[0], scene.view.vup[1], scene.view.vup[2]);
+        let reader = new FileReader();
+        reader.onload = (event) => {
+            scene = JSON.parse(event.target.result);
+            scene.view.prp = Vector3(scene.view.prp[0], scene.view.prp[1], scene.view.prp[2]);
+            scene.view.srp = Vector3(scene.view.srp[0], scene.view.srp[1], scene.view.srp[2]);
+            scene.view.vup = Vector3(scene.view.vup[0], scene.view.vup[1], scene.view.vup[2]);
 
-        for (let i = 0; i < scene.models.length; i++) {
-            if (scene.models[i].type === 'generic') {
-                for (let j = 0; j < scene.models[i].vertices.length; j++) {
-                    scene.models[i].vertices[j] = Vector4(scene.models[i].vertices[j][0],
-                                                          scene.models[i].vertices[j][1],
-                                                          scene.models[i].vertices[j][2],
-                                                          1);
+            for (let i = 0; i < scene.models.length; i++) {
+                if (scene.models[i].type === 'generic') {
+                    for (let j = 0; j < scene.models[i].vertices.length; j++) {
+                        scene.models[i].vertices[j] = Vector4(scene.models[i].vertices[j][0],
+                            scene.models[i].vertices[j][1],
+                            scene.models[i].vertices[j][2],
+                            1);
+                    }
+                } else {
+                    scene.models[i].center = Vector4(scene.models[i].center[0],
+                        scene.models[i].center[1],
+                        scene.models[i].center[2],
+                        1);
                 }
+                scene.models[i].matrix = new Matrix(4, 4);
             }
-            else {
-                scene.models[i].center = Vector4(scene.models[i].center[0],
-                                                 scene.models[i].center[1],
-                                                 scene.models[i].center[2],
-                                                 1);
-            }
-            scene.models[i].matrix = new Matrix(4, 4);
-        }
-    };
-    reader.readAsText(scene_file.files[0], 'UTF-8');
-}
+        };
+        reader.readAsText(scene_file.files[0], 'UTF-8');
+    }
 
 // Draw black 2D line with red endpoints 
-function drawLine(x1, y1, x2, y2) {
-    ctx.strokeStyle = '#000000';
-    ctx.beginPath();
-    ctx.moveTo(x1, y1);
-    ctx.lineTo(x2, y2);
-    ctx.stroke();
+    function drawLine(x1, y1, x2, y2) {
+        ctx.strokeStyle = '#000000';
+        ctx.beginPath();
+        ctx.moveTo(x1, y1);
+        ctx.lineTo(x2, y2);
+        ctx.stroke();
 
-    ctx.fillStyle = '#FF0000';
-    ctx.fillRect(x1 - 2, y1 - 2, 4, 4);
-    ctx.fillRect(x2 - 2, y2 - 2, 4, 4);
-}
+        ctx.fillStyle = '#FF0000';
+        ctx.fillRect(x1 - 2, y1 - 2, 4, 4);
+        ctx.fillRect(x2 - 2, y2 - 2, 4, 4);
+    }
