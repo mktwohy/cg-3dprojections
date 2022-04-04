@@ -23,20 +23,17 @@ function outcodeParallel(vertex) {
     let outcode = 0;
     if (vertex.x < (-1.0 - FLOAT_EPSILON)) {
         outcode += LEFT;
-    }
-    else if (vertex.x > (1.0 + FLOAT_EPSILON)) {
+    } else if (vertex.x > (1.0 + FLOAT_EPSILON)) {
         outcode += RIGHT;
     }
     if (vertex.y < (-1.0 - FLOAT_EPSILON)) {
         outcode += BOTTOM;
-    }
-    else if (vertex.y > (1.0 + FLOAT_EPSILON)) {
+    } else if (vertex.y > (1.0 + FLOAT_EPSILON)) {
         outcode += TOP;
     }
-    if (vertex.x < (-1.0 - FLOAT_EPSILON)) {
+    if (vertex.z < (-1.0 - FLOAT_EPSILON)) {
         outcode += FAR;
-    }
-    else if (vertex.x > (0.0 + FLOAT_EPSILON)) {
+    } else if (vertex.z > (0.0 + FLOAT_EPSILON)) {
         outcode += NEAR;
     }
     return outcode;
