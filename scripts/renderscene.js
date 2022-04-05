@@ -21,6 +21,8 @@ function init() {
 
     ctx = view.getContext('2d');
 
+    console.log(mat4x4Perspective(Vector3(0, 10,-5),Vector3(20,15,-40), Vector3(1,1,0), [-12,6,-12,6,10,100] ));
+
     // initial scene... feel free to change this
     scene = {
         view: {
@@ -66,7 +68,7 @@ function init() {
     start_time = performance.now(); // current timestamp in milliseconds
     window.requestAnimationFrame(animate);
 }
-
+console.log(intit());
 // Animation loop - repeatedly calls rendering code
 function animate(timestamp) {
     // step 1: calculate time (time since start)
