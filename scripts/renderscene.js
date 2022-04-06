@@ -92,19 +92,33 @@ function drawScene() {
     console.log("SCENE: ", scene);
     
     // TODO: implement drawing here!
+    let viewVolume = mat4x4Parallel(scene.view.prp, scene.view.srp, scene.view.vup, scene.view.clip)
 
-    // For each model, for each edge
-    for (let model of scene['models']){
-        console.log("model: ", model)
-        for (let edge of model.edges){
-            console.log("edge: ", edge)
+    // transform each vertex to canonical view volume
+    for (let model of scene.models) {
+        for (let vertex of model.vertices) {
+            vertex = vertex.dot(viewVolume)
         }
     }
 
-    //  * transform to canonical view volume
-    //  * clip in 3D
-    //  * project to 2D
-    //  * draw line
+    for (let model of scene.models){
+        for (let edge of model.edges){
+            for (let i = 0; i < edge.length - 1; i++) {
+                let p0 = model.vertices[edge[i]]
+                let p1 = model.vertices[edge[i+1]]
+
+                //  * clip in 3D
+                let line = clipLineParallel({ p0: p0, p1: p1 })
+
+                //  * project to 2D
+                // Skip this step for parallel
+
+                //  * draw line
+                drawLine(line.p0.x, line.p0.y, line.p1.x, line.p1.y)
+            }
+
+        }
+    }
 }
 
 // Called when user presses a key on the keyboard down 
@@ -112,9 +126,11 @@ function onKeyDown(event) {
     switch (event.keyCode) {
         case 37: // LEFT Arrow
             console.log("left");
+            scalar = scalar * 0.1
             break;
         case 39: // RIGHT Arrow
             console.log("right");
+            scalar = scalar * 1.1
             break;
         case 65: // A key
             console.log("A");
