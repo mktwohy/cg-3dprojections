@@ -68,7 +68,7 @@ function init() {
     start_time = performance.now(); // current timestamp in milliseconds
     window.requestAnimationFrame(animate);
 }
-console.log(intit());
+
 // Animation loop - repeatedly calls rendering code
 function animate(timestamp) {
     // step 1: calculate time (time since start)
