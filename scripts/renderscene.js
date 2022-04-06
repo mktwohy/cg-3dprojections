@@ -13,6 +13,7 @@ const FLOAT_EPSILON = 0.000001;
 
 // Initialization function - called when web page loads
 function init() {
+    console.log("CALL: init()")
     let w = 800;
     let h = 600;
     view = document.getElementById('view');
@@ -87,10 +88,19 @@ function animate(timestamp) {
 
 // Main drawing code - use information contained in variable `scene`
 function drawScene() {
-    console.log(scene);
+    console.log("CALL: drawScene()")
+    console.log("SCENE: ", scene);
     
     // TODO: implement drawing here!
+
     // For each model, for each edge
+    for (let model of scene['models']){
+        console.log("model: ", model)
+        for (let edge of model.edges){
+            console.log("edge: ", edge)
+        }
+    }
+
     //  * transform to canonical view volume
     //  * clip in 3D
     //  * project to 2D
@@ -127,6 +137,7 @@ function onKeyDown(event) {
 
 // Called when user selects a new scene JSON file
     function loadNewScene() {
+        console.log("CALL: loadNewScene()")
         let scene_file = document.getElementById('scene_file');
 
         console.log(scene_file.files[0]);
