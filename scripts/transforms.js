@@ -24,11 +24,11 @@ function mat4x4Parallel(prp, srp, vup, clip) {
     ];
 
     //translate front clipping plane to origin
-    let Tpar = new Matrix(4, 4);
-    Tpar.values = [
-        [1, 0, 0, 0],
-        [0, 1, 0, 0],
-        [0, 0, 1, clip[4]],
+    let T = new Matrix(4, 4);
+    T.values = [
+        [1, 0, 0, -prp.x],
+        [0, 1, 0, -prp.y],
+        [0, 0, 1, -prp.z],
         [0, 0, 0, 1]
     ];
 
@@ -46,19 +46,19 @@ function mat4x4Parallel(prp, srp, vup, clip) {
 
     mat4x4Scale(Spar, Sparx, Spary, Sparz);
 
-    let view = R.mult(start);
-    console.log(view);
-    let projection = Spar.mult(SHpar);
-    console.log(projection);
-    let projection1 = projection.mult(Tpar);
-    console.log(projection1);
-    let Nper = projection1.mult(view);
-    console.log(Nper);
-
-    //clip against the view fustrum?
-    let transform = mat4x4MPar().mult(Nper);
-    console.log(transform);
-    return transform;
+    // let view = R.mult(start);
+    // console.log(view);
+    // let projection = Spar.mult(SHpar);
+    // console.log(projection);
+    // let projection1 = projection.mult(Tpar);
+    // console.log(projection1);
+    // let Nper = projection1.mult(view);
+    // console.log(Nper);
+    //
+    // //clip against the view fustrum?
+    // let transform = mat4x4MPar().mult(Nper);
+    // console.log(transform);
+    return Spar.mult(T).mult(SHpar).mult(R).mult(T);
 }
 
 // create a 4x4 matrix to the perspective projection / view matrix
@@ -85,6 +85,14 @@ function mat4x4Perspective(prp, srp, vup, clip) {
         [0, 0, 0, 1]
     ];
 
+    let T = new Matrix(4, 4);
+    T.values = [
+        [1, 0, 0, -prp.x],
+        [0, 1, 0, -prp.y],
+        [0, 0, 1, -prp.z],
+        [0, 0, 0, 1]
+    ];
+
     // 3. shear such that CW is on the z-axis
     let SHx = -(dop.x)/dop.z;
     let SHy = -(dop.y)/dop.z;
@@ -100,12 +108,12 @@ function mat4x4Perspective(prp, srp, vup, clip) {
 
     mat4x4Scale(Sper, Sperx, Spery, Sperz);
 
-    let view = R.mult(start);
-    let projection = Sper.mult(SHper);
-    let Nper = projection.mult(view);
-
-    //clip against the view fustrum?
-    return mat4x4MPer().mult(Nper);
+    // let view = R.mult(start);
+    // let projection = Sper.mult(SHper);
+    // let Nper = projection.mult(view);
+    //
+    // //clip against the view fustrum?
+    return Sper.mult(SHper).mult(R).mult(T);
 }
 
 // create a 4x4 matrix to project a parallel image on the z=0 plane
