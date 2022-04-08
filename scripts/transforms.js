@@ -61,13 +61,6 @@ function mat4x4Perspective(prp, srp, vup, clip) {
         [0, 0, 0, 1]
     ];
 
-    let T = new Matrix(4, 4);
-    T.values = [
-        [1, 0, 0, -prp.x],
-        [0, 1, 0, -prp.y],
-        [0, 0, 1, -prp.z],
-        [0, 0, 0, 1]
-    ];
 
     // 3. shear such that CW is on the z-axis
     let SHx = -(dop.x)/dop.z;
@@ -84,12 +77,12 @@ function mat4x4Perspective(prp, srp, vup, clip) {
     let Sper = new Matrix(4,4);
     mat4x4Scale(Sper, Sperx, Spery, Sperz);
 
-    // let view = R.mult(start);
-    // let projection = Sper.mult(SHper);
+    //let view = R.mult(start);
+    //projection = Sper.mult(SHper);
     // let Nper = projection.mult(view);
-    //
+    // Sper.mult(SHper).mult(R).mult(start);
     // //clip against the view fustrum?
-    return Sper.mult(SHper).mult(R).mult(T);
+    return Matrix.multiply([Sper, SHper, R, start]);
 }
 
 // create a 4x4 matrix to project a parallel image on the z=0 plane

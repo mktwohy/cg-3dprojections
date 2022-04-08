@@ -89,8 +89,8 @@ function drawScene() {
     console.log("CALL: drawScene()")
     console.log("SCENE: ", scene);
     
-    let Npar = mat4x4Parallel(scene.view.prp, scene.view.srp, scene.view.vup, scene.view.clip)
-    let Mpar = mat4x4MPar()
+    let Npar = mat4x4Perspective(scene.view.prp, scene.view.srp, scene.view.vup, scene.view.clip)
+    let Mpar = mat4x4MPer()
     let V = mat4x4V(view.width, view.height)
 
     for (let model of scene.models){
@@ -101,13 +101,13 @@ function drawScene() {
                 let p1 = model.vertices[edge[i]]
                 let p2 = model.vertices[edge[i+1]]
 
+
                 // // multiply by Npar
                 p1 = Npar.mult(p1)
                 p2 = Npar.mult(p2)
 
                 // clip in 3D
-                let line = clipLineParallel({ p0: p1, p1: p2 })
-
+                let line = { p0: p1, p1: p2 }
                 // clipLineParallel() can return null, so we need to check
                 if (line !== null) {
 
@@ -121,10 +121,7 @@ function drawScene() {
                     // convert back to vector (mult() returns a 4x4 matrix)
                     p1 = vector4FromArray(p1.data)
                     p2 = vector4FromArray(p2.data)
-                    p1.x += 1
-                    p1.y += 1
-                    p2.x += 1
-                    p2.y += 1
+                    
 
                     // scale to window
                     p1 = V.mult(p1)
@@ -135,7 +132,7 @@ function drawScene() {
                     p2 = vector4FromArray(p2.data)
 
                     // draw line
-                    drawLine(p1.x, p1.y, p2.x, p2.y)
+                    drawLine(p1.x/p1.w, p1.y/p1.w, p2.x/p2.w, p2.y/p2.w)
                 }
             }
         }
