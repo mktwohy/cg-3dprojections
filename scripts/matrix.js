@@ -61,7 +61,7 @@ class Matrix {
             result.values = vals;
         }
         else {
-            console.log("could not multiply - row/column mismatch");
+            console.log("could not multiply - row/column mismatch " +this.rows+"x"+this.columns + " mult " + rhs.rows+"x"+rhs.columns);
         }
         return result;
     }

@@ -22,8 +22,6 @@ function init() {
 
     ctx = view.getContext('2d');
 
-    console.log(mat4x4Perspective(Vector3(0, 10,-5),Vector3(20,15,-40), Vector3(1,1,0), [-12,6,-12,6,10,100] ));
-
     // initial scene... feel free to change this
     scene = {
         view: {
@@ -91,32 +89,55 @@ function drawScene() {
     console.log("CALL: drawScene()")
     console.log("SCENE: ", scene);
     
-    // TODO: implement drawing here!
-    let viewVolume = mat4x4Parallel(scene.view.prp, scene.view.srp, scene.view.vup, scene.view.clip)
-
-    // transform each vertex to canonical view volume
-    for (let model of scene.models) {
-        for (let vertex of model.vertices) {
-            vertex = vertex.dot(viewVolume)
-        }
-    }
+    let Npar = mat4x4Parallel(scene.view.prp, scene.view.srp, scene.view.vup, scene.view.clip)
+    let Mpar = mat4x4MPar()
+    let V = mat4x4V(view.width, view.height)
 
     for (let model of scene.models){
         for (let edge of model.edges){
+
+            // an edge can have multiple lines, so we need to iterate through each vertex, two at a time
             for (let i = 0; i < edge.length - 1; i++) {
-                let p0 = model.vertices[edge[i]]
-                let p1 = model.vertices[edge[i+1]]
+                let p1 = model.vertices[edge[i]]
+                let p2 = model.vertices[edge[i+1]]
 
-                //  * clip in 3D
-                let line = clipLineParallel({ p0: p0, p1: p1 })
+                // // multiply by Npar
+                p1 = Npar.mult(p1)
+                p2 = Npar.mult(p2)
 
-                //  * project to 2D
-                // Skip this step for parallel
+                // clip in 3D
+                let line = clipLineParallel({ p0: p1, p1: p2 })
 
-                //  * draw line
-                drawLine(line.p0.x, line.p0.y, line.p1.x, line.p1.y)
+                // clipLineParallel() can return null, so we need to check
+                if (line !== null) {
+
+                    // project to 2D
+                    p1 = Mpar.mult(line.p0)
+                    p2 = Mpar.mult(line.p1)
+
+                    // todo vertices are a bit outside the range [-1, 1] at this point in the code
+
+                    // translate to make new range [0, 2]
+                    // convert back to vector (mult() returns a 4x4 matrix)
+                    p1 = vector4FromArray(p1.data)
+                    p2 = vector4FromArray(p2.data)
+                    p1.x += 1
+                    p1.y += 1
+                    p2.x += 1
+                    p2.y += 1
+
+                    // scale to window
+                    p1 = V.mult(p1)
+                    p2 = V.mult(p2)
+
+                    // convert back to vector (mult() returns a 4x4 matrix)
+                    p1 = vector4FromArray(p1.data)
+                    p2 = vector4FromArray(p2.data)
+
+                    // draw line
+                    drawLine(p1.x, p1.y, p2.x, p2.y)
+                }
             }
-
         }
     }
 }

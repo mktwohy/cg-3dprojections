@@ -1,7 +1,11 @@
 // Clip line - should either return a new line (with two endpoints inside view volume) or null (if line is completely outside view volume)
 function clipLineParallel(line) {
-    let p0 = Vector3(line.p0.x, line.p0.y, line.p0.z);
-    let p1 = Vector3(line.p1.x, line.p1.y, line.p1.z);
+    let [x1, y1, z1, w1] = line.p0.data
+    let [x2, y2, z2, w2] = line.p1.data
+
+    let p0 = Vector4(x1, y1, z1, w1);
+    let p1 = Vector4(x2, y2, z2, w2);
+
     let out0 = outcodeParallel(p0);
     let out1 = outcodeParallel(p1);
 
@@ -99,5 +103,5 @@ function findIntersectionParallel(line, edge) {
         default:
             x = 0; y = 0; z = 0
     }
-    return { x: x, y: y, z: z }
+    return Vector4(x, y, z, 1)
 }

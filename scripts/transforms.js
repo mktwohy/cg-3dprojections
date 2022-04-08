@@ -116,7 +116,24 @@ function mat4x4MPer() {
     return mper;
 }
 
+// create a 4x4 matrix to scale to window
+function mat4x4V(width, height) {
+    let w2 = width / 2
+    let h2 = height / 2
+    let V = new Matrix(4, 4)
+    V.values = [
+        [w2, 0 ,0, w2],
+        [0, h2, 0, h2],
+        [0, 0, 1, 0],
+        [0, 0, 0, 1]
+    ]
+    return V
+}
 
+function vector4FromArray(array) {
+    let [x2, y2, z3, w4] = array
+    return Vector4(x2, y2, z3, w4)
+}
 
 ///////////////////////////////////////////////////////////////////////////////////
 // 4x4 Transform Matrices                                                         //
