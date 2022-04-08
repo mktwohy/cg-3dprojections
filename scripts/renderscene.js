@@ -11,6 +11,9 @@ const FAR =    2;  // binary 000010
 const NEAR =   1;  // binary 000001
 const FLOAT_EPSILON = 0.000001;
 
+const PERSPECTIVE = 'perspective'
+const PARALLEL = 'parallel'
+
 // Initialization function - called when web page loads
 function init() {
     console.log("CALL: init()")
@@ -25,7 +28,7 @@ function init() {
     // initial scene... feel free to change this
     scene = {
         view: {
-            type: 'perspective',
+            type: PERSPECTIVE,
             prp: Vector3(44, 20, -16),
             srp: Vector3(20, 20, -40),
             vup: Vector3(0, 1, 0),
@@ -88,9 +91,17 @@ function animate(timestamp) {
 function drawScene() {
     console.log("CALL: drawScene()")
     console.log("SCENE: ", scene);
-    
-    let Npar = mat4x4Perspective(scene.view.prp, scene.view.srp, scene.view.vup, scene.view.clip)
-    let Mpar = mat4x4MPer()
+
+    let N
+    let M
+    if (scene.view.type === PERSPECTIVE){
+        N = mat4x4Perspective(scene.view.prp, scene.view.srp, scene.view.vup, scene.view.clip)
+        M = mat4x4MPer()
+    } else {
+        N = mat4x4Parallel(scene.view.prp, scene.view.srp, scene.view.vup, scene.view.clip)
+        M = mat4x4MPar()
+    }
+
     let V = mat4x4V(view.width, view.height)
 
     for (let model of scene.models){
@@ -103,17 +114,18 @@ function drawScene() {
 
 
                 // // multiply by Npar
-                p1 = Npar.mult(p1)
-                p2 = Npar.mult(p2)
+                p1 = N.mult(p1)
+                p2 = N.mult(p2)
 
                 // clip in 3D
                 let line = { p0: p1, p1: p2 }
+
                 // clipLineParallel() can return null, so we need to check
                 if (line !== null) {
 
                     // project to 2D
-                    p1 = Mpar.mult(line.p0)
-                    p2 = Mpar.mult(line.p1)
+                    p1 = M.mult(line.p0)
+                    p2 = M.mult(line.p1)
 
                     // todo vertices are a bit outside the range [-1, 1] at this point in the code
 
@@ -144,11 +156,9 @@ function onKeyDown(event) {
     switch (event.keyCode) {
         case 37: // LEFT Arrow
             console.log("left");
-            scalar = scalar * 0.1
             break;
         case 39: // RIGHT Arrow
             console.log("right");
-            scalar = scalar * 1.1
             break;
         case 65: // A key
             console.log("A");
