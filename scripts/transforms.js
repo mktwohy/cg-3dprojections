@@ -9,10 +9,10 @@ function mat4x4Parallel(prp, srp, vup, clip) {
 
     let v = n.cross(u);
     let dop = Vector3((clip[0]+clip[1])/2,(clip[2]+clip[3])/2,-(clip[4]));
-    let start = new Matrix(4, 4);
 
     // 1. translate PRP to origin
-    mat4x4Translate(start, prp.x, prp.y, prp.z);
+    let T = new Matrix(4, 4);
+    mat4x4Translate(T, prp.x, prp.y, prp.z);
 
     // 2. rotate VRC such that (u,v,n) align with (x,y,z)
     let R = new Matrix(4, 4);
@@ -23,42 +23,28 @@ function mat4x4Parallel(prp, srp, vup, clip) {
         [0, 0, 0, 1]
     ];
 
-    //translate front clipping plane to origin
-    let T = new Matrix(4, 4);
-    T.values = [
-        [1, 0, 0, -prp.x],
-        [0, 1, 0, -prp.y],
-        [0, 0, 1, -prp.z],
-        [0, 0, 0, 1]
-    ];
-
     // 3. shear such that CW is on the z-axis
-    let SHx= -(dop.x)/dop.z;
-    let SHy= -(dop.y)/dop.z;
+    let SHx = -(dop.x)/dop.z;
+    let SHy = -(dop.y)/dop.z;
+
     let SHpar = new Matrix(4,4);
     mat4x4ShearXY(SHpar, SHx, SHy);
+
+    // translate front clipping plane to origin
+    let near = srp.z
+
+    let Tpar = new Matrix(4, 4);
+    mat4x4Translate(Tpar, 0, 0, near)
 
     // 4. scale such that view volume bounds are ([-1,1], [-1,1], [-1,0])
     let Sparx = 2/(clip[1]-clip[0]);
     let Spary = 2/(clip[3]-clip[2]);
     let Sparz = 1/(clip[5]-clip[4]);
-    let Spar = new Matrix(4,4);
 
+    let Spar = new Matrix(4,4);
     mat4x4Scale(Spar, Sparx, Spary, Sparz);
 
-    // let view = R.mult(start);
-    // console.log(view);
-    // let projection = Spar.mult(SHpar);
-    // console.log(projection);
-    // let projection1 = projection.mult(Tpar);
-    // console.log(projection1);
-    // let Nper = projection1.mult(view);
-    // console.log(Nper);
-    //
-    // //clip against the view fustrum?
-    // let transform = mat4x4MPar().mult(Nper);
-    // console.log(transform);
-    return Spar.mult(T).mult(SHpar).mult(R).mult(T);
+    return Spar.mult(Tpar).mult(SHpar).mult(R).mult(Tpar);
 }
 
 // create a 4x4 matrix to the perspective projection / view matrix
@@ -96,16 +82,16 @@ function mat4x4Perspective(prp, srp, vup, clip) {
     // 3. shear such that CW is on the z-axis
     let SHx = -(dop.x)/dop.z;
     let SHy = -(dop.y)/dop.z;
-    let SHper = new Matrix(4,4);
 
+    let SHper = new Matrix(4,4);
     mat4x4ShearXY(SHper, SHx, SHy);
 
     // 4. scale such that view volume bounds are ([z,-z], [z,-z], [-1,zmin])
     let Sperx = (2*clip[4])/((clip[1]-clip[0])*clip[5]);
     let Spery = (2*clip[4])/((clip[3]-clip[2])*clip[5]);
     let Sperz = 1 / clip[5];
-    let Sper = new Matrix(4,4);
 
+    let Sper = new Matrix(4,4);
     mat4x4Scale(Sper, Sperx, Spery, Sperz);
 
     // let view = R.mult(start);
