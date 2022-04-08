@@ -1,13 +1,8 @@
 
 // create a 4x4 matrix to the parallel projection / view matrix
 function mat4x4Parallel(prp, srp, vup, clip) {
-    let n = prp.subtract(srp);
-    n.normalize();
+    let [u, v, n] = calcUVN(prp, srp, vup)
 
-    let u = vup.cross(n);
-    u.normalize();
-
-    let v = n.cross(u);
     let dop = Vector3((clip[0]+clip[1])/2,(clip[2]+clip[3])/2,-(clip[4]));
 
     // 1. translate PRP to origin
@@ -49,13 +44,8 @@ function mat4x4Parallel(prp, srp, vup, clip) {
 
 // create a 4x4 matrix to the perspective projection / view matrix
 function mat4x4Perspective(prp, srp, vup, clip) {
-    let n = prp.subtract(srp);
-    n.normalize();
+    let [u, v, n] = calcUVN(prp, srp, vup)
 
-    let u = vup.cross(n);
-    u.normalize();
-
-    let v = n.cross(u);
     let dop = Vector3((clip[0]+clip[1])/2,(clip[2]+clip[3])/2,-(clip[4]));
     let start = new Matrix(4, 4);
 
@@ -131,6 +121,16 @@ function mat4x4MPer() {
 ///////////////////////////////////////////////////////////////////////////////////
 // 4x4 Transform Matrices                                                         //
 ///////////////////////////////////////////////////////////////////////////////////
+function calcUVN(prp, srp, vup) {
+    let n = prp.subtract(srp);
+    n.normalize();
+
+    let u = vup.cross(n);
+    u.normalize();
+
+    let v = n.cross(u);
+    return [u, v, n]
+}
 
 // set values of existing 4x4 matrix to the identity matrix
 function mat4x4Identity(mat4x4) {
