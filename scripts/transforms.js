@@ -2,8 +2,9 @@
 // create a 4x4 matrix to the parallel projection / view matrix
 function mat4x4Parallel(prp, srp, vup, clip) {
     let [u, v, n] = calcUVN(prp, srp, vup)
+    let [left, right, bottom, top, near, far] = clip
 
-    let dop = Vector3((clip[0]+clip[1])/2,(clip[2]+clip[3])/2,-(clip[4]));
+    let dop = Vector3((left+right)/2, (bottom+top)/2, -near);
 
     // 1. translate PRP to origin
     let T = new Matrix(4, 4);
@@ -26,15 +27,13 @@ function mat4x4Parallel(prp, srp, vup, clip) {
     mat4x4ShearXY(SHpar, SHx, SHy);
 
     // translate front clipping plane to origin
-    let near = srp.z
-
     let Tpar = new Matrix(4, 4);
-    mat4x4Translate(Tpar, 0, 0, near)
+    mat4x4Translate(Tpar, 0, 0, srp.z)
 
     // 4. scale such that view volume bounds are ([-1,1], [-1,1], [-1,0])
-    let Sparx = 2/(clip[1]-clip[0]);
-    let Spary = 2/(clip[3]-clip[2]);
-    let Sparz = 1/(clip[5]-clip[4]);
+    let Sparx = 2/(right - left);
+    let Spary = 2/(top - bottom);
+    let Sparz = 1/(far - near);
 
     let Spar = new Matrix(4,4);
     mat4x4Scale(Spar, Sparx, Spary, Sparz);
