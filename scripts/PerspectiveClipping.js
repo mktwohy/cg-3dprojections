@@ -1,9 +1,11 @@
 // Clip line - should either return a new line (with two endpoints inside view volume) or null (if line is completely outside view volume)
-function clipLinePerspective(line, z_min) {
-    let p0 = Vector3(line.p0.x, line.p0.y, line.p0.z);
-    let p1 = Vector3(line.p1.x, line.p1.y, line.p1.z);
-    let out0 = outcodePerspective(p0, z_min);
-    let out1 = outcodePerspective(p1, z_min);
+function clipLinePerspective(line) {
+    let p0 = vector4FromArray(line.p0.data);
+    let p1 = vector4FromArray(line.p1.data);
+
+    let zMin = Math.min(line.p0.z, line.p0.z)
+    let out0 = outcodePerspective(p0, zMin);
+    let out1 = outcodePerspective(p1, zMin);
 
     if (canTrivialAccept(out0, out1)) {
         return { p0: p0, p1: p1 }
@@ -56,7 +58,7 @@ function clipPointPerspective(p, outcode) {
     return newPoint
 }
 
-function findIntersectionPerspective(line, edge,) {
+function findIntersectionPerspective(line, edge) {
     let [deltaX, deltaY, deltaZ] = calcDeltas3D(line)
     let zMin = Math.min(line.p0.z, line.p1.z)
     let x, y, z, t
@@ -101,5 +103,5 @@ function findIntersectionPerspective(line, edge,) {
         default:
             x = 0; y = 0; z = 0
     }
-    return { x: x, y: y, z: z }
+    return Vector4(x, y, z, 1)
 }

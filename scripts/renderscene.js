@@ -109,42 +109,47 @@ function drawScene() {
 
             // an edge can have multiple lines, so we need to iterate through each vertex, two at a time
             for (let i = 0; i < edge.length - 1; i++) {
-                let p1 = model.vertices[edge[i]]
-                let p2 = model.vertices[edge[i+1]]
+                let p0 = model.vertices[edge[i]]
+                let p1 = model.vertices[edge[i+1]]
 
-
-                // // multiply by Npar
+                // multiply by Npar
+                p0 = N.mult(p0)
                 p1 = N.mult(p1)
-                p2 = N.mult(p2)
 
                 // clip in 3D
-                let line = { p0: p1, p1: p2 }
+                let line = { p0: p0, p1: p1 }
+
+                if (scene.view.type === PERSPECTIVE){
+                    line = clipLinePerspective(line)
+                } else {
+                    line = clipLineParallel(line)
+                }
 
                 // clipLineParallel() can return null, so we need to check
                 if (line !== null) {
 
                     // project to 2D
-                    p1 = M.mult(line.p0)
-                    p2 = M.mult(line.p1)
+                    p0 = M.mult(line.p0)
+                    p1 = M.mult(line.p1)
 
                     // todo vertices are a bit outside the range [-1, 1] at this point in the code
 
                     // translate to make new range [0, 2]
                     // convert back to vector (mult() returns a 4x4 matrix)
+                    p0 = vector4FromArray(p0.data)
                     p1 = vector4FromArray(p1.data)
-                    p2 = vector4FromArray(p2.data)
                     
 
                     // scale to window
+                    p0 = V.mult(p0)
                     p1 = V.mult(p1)
-                    p2 = V.mult(p2)
 
                     // convert back to vector (mult() returns a 4x4 matrix)
+                    p0 = vector4FromArray(p0.data)
                     p1 = vector4FromArray(p1.data)
-                    p2 = vector4FromArray(p2.data)
 
                     // draw line
-                    drawLine(p1.x/p1.w, p1.y/p1.w, p2.x/p2.w, p2.y/p2.w)
+                    drawLine(p0.x/p0.w, p0.y/p0.w, p1.x/p1.w, p1.y/p1.w)
                 }
             }
         }
