@@ -32,3 +32,8 @@ function canTrivialReject(out0, out1) {
 function makeLine(p0, p1) {
     return { p0: p0, p1: p1 }
 }
+
+function vector4FromArray(array) {
+    let [x2, y2, z3, w4] = array
+    return Vector4(x2, y2, z3, w4)
+}

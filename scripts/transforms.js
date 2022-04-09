@@ -122,11 +122,6 @@ function mat4x4V(width, height) {
     return V
 }
 
-function vector4FromArray(array) {
-    let [x2, y2, z3, w4] = array
-    return Vector4(x2, y2, z3, w4)
-}
-
 ///////////////////////////////////////////////////////////////////////////////////
 // 4x4 Transform Matrices                                                         //
 ///////////////////////////////////////////////////////////////////////////////////
