@@ -1,6 +1,6 @@
 
 // create a 4x4 matrix to the parallel projection / view matrix
-function mat4x4Parallel(prp, srp, vup, clip) {
+function mat4x4Npar(prp, srp, vup, clip) {
     let [left, right, bottom, top, near, far] = clip
 
     let dop = Vector3((left+right)/2, (bottom+top)/2, -near);
@@ -32,7 +32,7 @@ function mat4x4Parallel(prp, srp, vup, clip) {
 }
 
 // create a 4x4 matrix to the perspective projection / view matrix
-function mat4x4Perspective(prp, srp, vup, clip) {
+function mat4x4Nper(prp, srp, vup, clip) {
     let [left, right, bottom, top, near, far] = clip
 
     let dop = Vector3((left + right)/2,(bottom + top)/2,-near);

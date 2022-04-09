@@ -95,10 +95,10 @@ function drawScene() {
     let N
     let M
     if (scene.view.type === PERSPECTIVE){
-        N = mat4x4Perspective(scene.view.prp, scene.view.srp, scene.view.vup, scene.view.clip)
+        N = mat4x4Nper(scene.view.prp, scene.view.srp, scene.view.vup, scene.view.clip)
         M = mat4x4MPer()
     } else {
-        N = mat4x4Parallel(scene.view.prp, scene.view.srp, scene.view.vup, scene.view.clip)
+        N = mat4x4Npar(scene.view.prp, scene.view.srp, scene.view.vup, scene.view.clip)
         M = mat4x4MPar()
     }
 
