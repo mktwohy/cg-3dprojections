@@ -12,19 +12,19 @@ function mat4x4Npar(prp, srp, vup, clip) {
     let R = mat4x4R(prp, srp, vup)
 
     // 3. shear such that CW is on the z-axis
-    let SHx = -(dop.x)/dop.z;
-    let SHy = -(dop.y)/dop.z;
+    let SHx = -dop.x / dop.z;
+    let SHy = -dop.y / dop.z;
     let SHpar = new Matrix(4,4);
     mat4x4ShearXY(SHpar, SHx, SHy);
 
     // translate front clipping plane to origin
     let Tpar = new Matrix(4, 4);
-    mat4x4Translate(Tpar, 0, 0, srp.z)
+    mat4x4Translate(Tpar, 0, 0, near)
 
     // 4. scale such that view volume bounds are ([-1,1], [-1,1], [-1,0])
-    let Sparx = 2/(right - left);
-    let Spary = 2/(top - bottom);
-    let Sparz = 1/(far - near);
+    let Sparx = 2 / (right - left);
+    let Spary = 2 / (top - bottom);
+    let Sparz = 1 / far;
     let Spar = new Matrix(4,4);
     mat4x4Scale(Spar, Sparx, Spary, Sparz);
 
@@ -35,7 +35,7 @@ function mat4x4Npar(prp, srp, vup, clip) {
 function mat4x4Nper(prp, srp, vup, clip) {
     let [left, right, bottom, top, near, far] = clip
 
-    let dop = Vector3((left + right)/2,(bottom + top)/2,-near);
+    let dop = Vector3((left + right)/2, (bottom + top)/2, -near);
 
     // 1. translate PRP to origin
     let T = mat4x4T(prp)
@@ -62,7 +62,7 @@ function mat4x4Nper(prp, srp, vup, clip) {
 }
 
 // create a 4x4 matrix to project a parallel image on the z=0 plane
-function mat4x4MPar() {
+function mat4x4Mpar() {
     let mpar = new Matrix(4, 4);
     mpar.values = [
         [1, 0, 0, 0],
@@ -74,7 +74,7 @@ function mat4x4MPar() {
 }
 
 // create a 4x4 matrix to project a perspective image on the z=-1 plane
-function mat4x4MPer() {
+function mat4x4Mper() {
     let mper = new Matrix(4, 4);
     mper.values = [
         [1, 0, 0, 0],
