@@ -96,10 +96,10 @@ function drawScene() {
     let M
     if (scene.view.type === PERSPECTIVE){
         N = mat4x4Nper(scene.view.prp, scene.view.srp, scene.view.vup, scene.view.clip)
-        M = mat4x4MPer()
+        M = mat4x4Mper()
     } else {
         N = mat4x4Npar(scene.view.prp, scene.view.srp, scene.view.vup, scene.view.clip)
-        M = mat4x4MPar()
+        M = mat4x4Mpar()
     }
 
     let V = mat4x4V(view.width, view.height)
@@ -127,24 +127,9 @@ function drawScene() {
 
                 // clipLineParallel/Perspective() can return null, so we need to check
                 if (line !== null) {
-                    p0 = line.p0
-                    p1 = line.p1
-
                     // project to 2D
-                    p0 = M.mult(line.p0)
-                    p1 = M.mult(line.p1)
-
-                    // todo vertices are a bit outside the range [-1, 1] at this point in the code
-
-                    // translate to make new range [0, 2]
-                    // convert back to vector (mult() returns a 4x4 matrix)
-                    p0 = vector4FromArray(p0.data)
-                    p1 = vector4FromArray(p1.data)
-                    
-
-                    // scale to window
-                    p0 = V.mult(p0)
-                    p1 = V.mult(p1)
+                    p0 = Matrix.multiply([V, M, line.p0])
+                    p1 = Matrix.multiply([V, M, line.p1])
 
                     // convert back to vector (mult() returns a 4x4 matrix)
                     p0 = vector4FromArray(p0.data)
