@@ -22,3 +22,13 @@ function canTrivialAccept(out0, out1) {
 function canTrivialReject(out0, out1) {
     return out0 & out1 !== 0
 }
+
+/**
+ * creates a line from two vectors
+ * @param p0 Vector4
+ * @param p1 Vector4
+ * @returns {{p0, p1}}
+ */
+function makeLine(p0, p1) {
+    return { p0: p0, p1: p1 }
+}

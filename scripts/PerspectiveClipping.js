@@ -8,7 +8,7 @@ function clipLinePerspective(line) {
     let out1 = outcodePerspective(p1, zMin);
 
     if (canTrivialAccept(out0, out1)) {
-        return { p0: p0, p1: p1 }
+        return makeLine(p0, p1)
     }
     if (canTrivialReject(out0, out1)) {
         return null
@@ -17,7 +17,7 @@ function clipLinePerspective(line) {
     p0 = clipPointPerspective(p0, out0)
     p1 = clipLinePerspective(p1, out1)
 
-    return { p0: p0, p1: p1 }
+    return makeLine(p0, p1)
 }
 
 // Get outcode for vertex (perspective view volume)

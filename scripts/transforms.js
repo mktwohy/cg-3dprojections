@@ -38,7 +38,7 @@ function mat4x4Parallel(prp, srp, vup, clip) {
     let Spar = new Matrix(4,4);
     mat4x4Scale(Spar, Sparx, Spary, Sparz);
 
-    return Spar.mult(Tpar).mult(SHpar).mult(R).mult(Tpar);
+    return Spar.mult(Tpar).mult(SHpar).mult(R).mult(T);
 }
 
 // create a 4x4 matrix to the perspective projection / view matrix
