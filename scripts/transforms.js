@@ -6,8 +6,7 @@ function mat4x4Parallel(prp, srp, vup, clip) {
     let dop = Vector3((left+right)/2, (bottom+top)/2, -near);
 
     // 1. translate PRP to origin
-    let T = new Matrix(4, 4);
-    mat4x4Translate(T, prp.x, prp.y, prp.z);
+    let T = mat4x4T(prp)
 
     // 2. rotate VRC such that (u,v,n) align with (x,y,z)
     let R = mat4x4R(prp, srp, vup)
@@ -39,8 +38,7 @@ function mat4x4Perspective(prp, srp, vup, clip) {
     let dop = Vector3((left + right)/2,(bottom + top)/2,-near);
 
     // 1. translate PRP to origin
-    let T = new Matrix(4, 4);
-    mat4x4Translate(T, prp.x, prp.y, prp.z);
+    let T = mat4x4T(prp)
 
     // 2. rotate VRC such that (u,v,n) align with (x,y,z)
     let R = mat4x4R(prp, srp, vup)
@@ -114,6 +112,11 @@ function mat4x4R(prp, srp, vup) {
     return R
 }
 
+function mat4x4T(prp) {
+    let T = new Matrix(4, 4);
+    mat4x4Translate(T, prp.x, prp.y, prp.z);
+    return T
+}
 ///////////////////////////////////////////////////////////////////////////////////
 // 4x4 Transform Matrices                                                         //
 ///////////////////////////////////////////////////////////////////////////////////
