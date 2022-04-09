@@ -1,7 +1,6 @@
 
 // create a 4x4 matrix to the parallel projection / view matrix
 function mat4x4Parallel(prp, srp, vup, clip) {
-    let [u, v, n] = calcUVN(prp, srp, vup)
     let [left, right, bottom, top, near, far] = clip
 
     let dop = Vector3((left+right)/2, (bottom+top)/2, -near);
@@ -11,18 +10,11 @@ function mat4x4Parallel(prp, srp, vup, clip) {
     mat4x4Translate(T, prp.x, prp.y, prp.z);
 
     // 2. rotate VRC such that (u,v,n) align with (x,y,z)
-    let R = new Matrix(4, 4);
-    R.values = [
-        [u.x, u.y, u.z, 0],
-        [v.x, v.y, v.z, 0],
-        [n.x, n.y, n.z, 0],
-        [0, 0, 0, 1]
-    ];
+    let R = mat4x4R(prp, srp, vup)
 
     // 3. shear such that CW is on the z-axis
     let SHx = -(dop.x)/dop.z;
     let SHy = -(dop.y)/dop.z;
-
     let SHpar = new Matrix(4,4);
     mat4x4ShearXY(SHpar, SHx, SHy);
 
@@ -34,7 +26,6 @@ function mat4x4Parallel(prp, srp, vup, clip) {
     let Sparx = 2/(right - left);
     let Spary = 2/(top - bottom);
     let Sparz = 1/(far - near);
-
     let Spar = new Matrix(4,4);
     mat4x4Scale(Spar, Sparx, Spary, Sparz);
 
@@ -43,23 +34,16 @@ function mat4x4Parallel(prp, srp, vup, clip) {
 
 // create a 4x4 matrix to the perspective projection / view matrix
 function mat4x4Perspective(prp, srp, vup, clip) {
-    let [u, v, n] = calcUVN(prp, srp, vup)
+    let [left, right, bottom, top, near, far] = clip
 
-    let dop = Vector3((clip[0]+clip[1])/2,(clip[2]+clip[3])/2,-(clip[4]));
+    let dop = Vector3((left + right)/2,(bottom + top)/2,-near);
     let start = new Matrix(4, 4);
 
     // 1. translate PRP to origin
     mat4x4Translate(start, prp.x, prp.y, prp.z);
 
     // 2. rotate VRC such that (u,v,n) align with (x,y,z)
-    let R = new Matrix(4, 4);
-    R.values = [
-        [u.x, u.y, u.z, 0],
-        [v.x, v.y, v.z, 0],
-        [n.x, n.y, n.z, 0],
-        [0, 0, 0, 1]
-    ];
-
+    let R = mat4x4R(prp, srp, vup)
 
     // 3. shear such that CW is on the z-axis
     let SHx = -(dop.x)/dop.z;
@@ -69,9 +53,9 @@ function mat4x4Perspective(prp, srp, vup, clip) {
     mat4x4ShearXY(SHper, SHx, SHy);
 
     // 4. scale such that view volume bounds are ([z,-z], [z,-z], [-1,zmin])
-    let Sperx = (2*clip[4])/((clip[1]-clip[0])*clip[5]);
-    let Spery = (2*clip[4])/((clip[3]-clip[2])*clip[5]);
-    let Sperz = 1 / clip[5];
+    let Sperx = (2 * near) / ((right - left) * far);
+    let Spery = (2 * near) / ((top - bottom) * far);
+    let Sperz = 1 / far;
 
     let Sper = new Matrix(4,4);
     mat4x4Scale(Sper, Sperx, Spery, Sperz);
@@ -120,6 +104,19 @@ function mat4x4V(width, height) {
         [0, 0, 0, 1]
     ]
     return V
+}
+
+// create 4x4 matrix to rotate VRC such that (u, v, n) align with x, y, z
+function mat4x4R(prp, srp, vup) {
+    let [u, v, n] = calcUVN(prp, srp, vup)
+    let R = new Matrix(4, 4);
+    R.values = [
+        [u.x, u.y, u.z, 0],
+        [v.x, v.y, v.z, 0],
+        [n.x, n.y, n.z, 0],
+        [0, 0, 0, 1]
+    ];
+    return R
 }
 
 ///////////////////////////////////////////////////////////////////////////////////

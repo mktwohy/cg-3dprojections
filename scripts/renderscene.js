@@ -112,7 +112,7 @@ function drawScene() {
                 let p0 = model.vertices[edge[i]]
                 let p1 = model.vertices[edge[i+1]]
 
-                // multiply by Npar
+                // multiply by N
                 p0 = N.mult(p0)
                 p1 = N.mult(p1)
 
@@ -125,8 +125,10 @@ function drawScene() {
                     line = clipLineParallel(line)
                 }
 
-                // clipLineParallel() can return null, so we need to check
+                // clipLineParallel/Perspective() can return null, so we need to check
                 if (line !== null) {
+                    p0 = line.p0
+                    p1 = line.p1
 
                     // project to 2D
                     p0 = M.mult(line.p0)

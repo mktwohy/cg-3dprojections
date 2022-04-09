@@ -40,10 +40,10 @@ function outcodeParallel(vertex) {
     return outcode;
 }
 
-// p: Object { x, y, z }
+// p: Vector4
 // outcode: Number
 function clipPointParallel(p, outcode) {
-    let newPoint = vector4FromArray(p.data)
+    let newPoint = p
     for (let edge in [LEFT, RIGHT, BOTTOM, TOP, FAR, NEAR]) {
         let edgeCode = Number(edge)
 

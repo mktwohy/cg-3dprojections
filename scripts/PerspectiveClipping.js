@@ -44,7 +44,7 @@ function outcodePerspective(vertex, z_min) {
     return outcode;
 }
 
-// p: Object { x, y, z }
+// p: Vector4
 // outcode: Number
 function clipPointPerspective(p, outcode) {
     let newPoint = p
