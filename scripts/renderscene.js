@@ -28,7 +28,7 @@ function init() {
     // initial scene... feel free to change this
     scene = {
         view: {
-            type: PARALLEL,
+            type: PERSPECTIVE,
             prp: Vector3(44, 20, -16),
             srp: Vector3(20, 20, -40),
             vup: Vector3(0, 1, 0),

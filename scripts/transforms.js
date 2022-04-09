@@ -29,7 +29,7 @@ function mat4x4Parallel(prp, srp, vup, clip) {
     let Spar = new Matrix(4,4);
     mat4x4Scale(Spar, Sparx, Spary, Sparz);
 
-    return Spar.mult(Tpar).mult(SHpar).mult(R).mult(T);
+    return Matrix.multiply([Spar, Tpar, SHpar, R, T])
 }
 
 // create a 4x4 matrix to the perspective projection / view matrix
@@ -37,10 +37,10 @@ function mat4x4Perspective(prp, srp, vup, clip) {
     let [left, right, bottom, top, near, far] = clip
 
     let dop = Vector3((left + right)/2,(bottom + top)/2,-near);
-    let start = new Matrix(4, 4);
 
     // 1. translate PRP to origin
-    mat4x4Translate(start, prp.x, prp.y, prp.z);
+    let T = new Matrix(4, 4);
+    mat4x4Translate(T, prp.x, prp.y, prp.z);
 
     // 2. rotate VRC such that (u,v,n) align with (x,y,z)
     let R = mat4x4R(prp, srp, vup)
@@ -60,12 +60,7 @@ function mat4x4Perspective(prp, srp, vup, clip) {
     let Sper = new Matrix(4,4);
     mat4x4Scale(Sper, Sperx, Spery, Sperz);
 
-    //let view = R.mult(start);
-    //projection = Sper.mult(SHper);
-    // let Nper = projection.mult(view);
-    // Sper.mult(SHper).mult(R).mult(start);
-    // //clip against the view fustrum?
-    return Matrix.multiply([Sper, SHper, R, start]);
+    return Matrix.multiply([Sper, SHper, R, T]);
 }
 
 // create a 4x4 matrix to project a parallel image on the z=0 plane
