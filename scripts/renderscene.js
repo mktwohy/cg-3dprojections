@@ -28,7 +28,7 @@ function init() {
     // initial scene... feel free to change this
     scene = {
         view: {
-            type: PARALLEL,
+            type: PERSPECTIVE,
             prp: Vector3(44, 20, -16),
             srp: Vector3(20, 20, -40),
             vup: Vector3(0, 1, 0),
@@ -84,7 +84,7 @@ function animate(timestamp) {
 
     // step 4: request next animation frame (recursively calling same function)
     // (may want to leave commented out while debugging initially)
-    // window.requestAnimationFrame(animate);
+    window.requestAnimationFrame(animate);
 }
 
 // Main drawing code - use information contained in variable `scene`
@@ -126,7 +126,7 @@ function drawScene() {
                 }
 
                 // clipLineParallel/Perspective() can return null, so we need to check
-                if (line !== null) {
+                if (line.p0 !== null && line.p1 !== null) {
                     // project to 2D
                     p0 = Matrix.multiply([V, M, line.p0])
                     p1 = Matrix.multiply([V, M, line.p1])
@@ -148,9 +148,11 @@ function onKeyDown(event) {
     switch (event.keyCode) {
         case 37: // LEFT Arrow
             console.log("left");
+            scene.view.prp.x -= 1
             break;
         case 39: // RIGHT Arrow
             console.log("right");
+            scene.view.prp.x += 1
             break;
         case 65: // A key
             console.log("A");

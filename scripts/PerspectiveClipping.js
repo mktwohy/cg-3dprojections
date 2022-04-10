@@ -15,7 +15,7 @@ function clipLinePerspective(line) {
     }
 
     p0 = clipPointPerspective(p0, out0)
-    p1 = clipLinePerspective(p1, out1)
+    p1 = clipPointPerspective(p1, out1)
 
     return makeLine(p0, p1)
 }
