@@ -1,4 +1,6 @@
 let view;
+
+/** @type CanvasRenderingContext2D */
 let ctx;
 let scene;
 let start_time;
@@ -73,6 +75,8 @@ function init() {
 
 // Animation loop - repeatedly calls rendering code
 function animate(timestamp) {
+    ctx.clearRect(0, 0, view.width, view.height)
+
     // step 1: calculate time (time since start)
     let time = timestamp - start_time;
     
@@ -89,8 +93,8 @@ function animate(timestamp) {
 
 // Main drawing code - use information contained in variable `scene`
 function drawScene() {
-    console.log("CALL: drawScene()")
-    console.log("SCENE: ", scene);
+    // console.log("CALL: drawScene()")
+    // console.log("SCENE: ", scene);
 
     let N
     let M
