@@ -130,6 +130,21 @@ function calcUVN(prp, srp, vup) {
     let v = n.cross(u);
     return [u, v, n]
 }
+function calcU(prp, srp, vup) {
+    let n = prp.subtract(srp);
+    n.normalize();
+
+    let u = vup.cross(n);
+    u.normalize();
+
+    return u;
+}
+function calcN(prp, srp, vup) {
+    let n = prp.subtract(srp);
+    n.normalize();
+    
+    return n;
+}
 
 // set values of existing 4x4 matrix to the identity matrix
 function mat4x4Identity(mat4x4) {

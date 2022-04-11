@@ -28,7 +28,7 @@ function init() {
     // initial scene... feel free to change this
     scene = {
         view: {
-            type: PARALLEL,
+            type: PERSPECTIVE,
             prp: Vector3(44, 20, -16),
             srp: Vector3(20, 20, -40),
             vup: Vector3(0, 1, 0),
@@ -154,17 +154,43 @@ function onKeyDown(event) {
             break;
         case 65: // A key
             console.log("A");
+            let u = calcU(scene.view.prp, scene.view.srp, scene.view.vup);
+            let u4 = scene.view.prp.subtract(u)
+            let u5 = scene.view.srp.subtract(u)
+
+            scene.view.prp = u4
+            scene.view.srp = u5
             break;
         case 68: // D key
             console.log("D");
+            let u1 = calcU(scene.view.prp, scene.view.srp, scene.view.vup);
+            let u0 = scene.view.prp.add(u1)
+            let u2 = scene.view.srp.add(u1)
+
+            scene.view.prp = u0
+            scene.view.srp = u2
             break;
         case 83: // S key
             console.log("S");
+            let n = calcN(scene.view.prp, scene.view.srp, scene.view.vup);
+            let n3 = scene.view.prp.subtract(n)
+            let n4 = scene.view.srp.subtract(n)
+
+            scene.view.prp = n3
+            scene.view.srp = n4
             break;
         case 87: // W key
             console.log("W");
+            console.log("S");
+            let n1 = calcN(scene.view.prp, scene.view.srp, scene.view.vup);
+            let n0 = scene.view.prp.add(n1)
+            let n2 = scene.view.srp.add(n1)
+            
+            scene.view.prp = n0
+            scene.view.srp = n2
             break;
     }
+    drawScene();
 }
 
 ///////////////////////////////////////////////////////////////////////////
