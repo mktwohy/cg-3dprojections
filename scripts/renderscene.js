@@ -66,7 +66,7 @@ function init() {
                 type: 'generic',
                 vertices: [
                     Vector4(0, 30, -40, 1),
-                    Vector4(0, 40, -40, 1), 
+                    Vector4(0, 40, -40, 1) ,  
                     Vector4(-10, 30, -40, 1),
                     Vector4(-10, 40, -40, 1), 
                     Vector4(0, 30, -50, 1),
