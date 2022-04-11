@@ -1,4 +1,6 @@
 let view;
+
+/** @type CanvasRenderingContext2D */
 let ctx;
 let scene;
 let start_time;
@@ -73,6 +75,8 @@ function init() {
 
 // Animation loop - repeatedly calls rendering code
 function animate(timestamp) {
+    ctx.clearRect(0, 0, view.width, view.height)
+
     // step 1: calculate time (time since start)
     let time = timestamp - start_time;
     
@@ -84,13 +88,13 @@ function animate(timestamp) {
 
     // step 4: request next animation frame (recursively calling same function)
     // (may want to leave commented out while debugging initially)
-    // window.requestAnimationFrame(animate);
+    window.requestAnimationFrame(animate);
 }
 
 // Main drawing code - use information contained in variable `scene`
 function drawScene() {
-    console.log("CALL: drawScene()")
-    console.log("SCENE: ", scene);
+    // console.log("CALL: drawScene()")
+    // console.log("SCENE: ", scene);
 
     let N
     let M
@@ -125,11 +129,14 @@ function drawScene() {
                     line = clipLineParallel(line)
                 }
 
+                p0 = vector4FromArray(line.p0.data)
+                p1 = vector4FromArray(line.p1.data)
+
                 // clipLineParallel/Perspective() can return null, so we need to check
-                if (line !== null) {
+                if (p0 !== null && p1 !== null) {
                     // project to 2D
-                    p0 = Matrix.multiply([V, M, line.p0])
-                    p1 = Matrix.multiply([V, M, line.p1])
+                    p0 = Matrix.multiply([V, M, p0])
+                    p1 = Matrix.multiply([V, M, p1])
 
                     // convert back to vector (mult() returns a 4x4 matrix)
                     p0 = vector4FromArray(p0.data)
@@ -148,9 +155,13 @@ function onKeyDown(event) {
     switch (event.keyCode) {
         case 37: // LEFT Arrow
             console.log("left");
+            scene.view.prp.x += 1
+            scene.view.srp.x += 1
             break;
         case 39: // RIGHT Arrow
             console.log("right");
+            scene.view.prp.x -= 1
+            scene.view.srp.x -= 1
             break;
         case 65: // A key
             console.log("A");

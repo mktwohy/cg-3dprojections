@@ -3,7 +3,7 @@
 function mat4x4Npar(prp, srp, vup, clip) {
     let [left, right, bottom, top, near, far] = clip
 
-    let dop = Vector3((left+right)/2, (bottom+top)/2, -near);
+    let dop = Vector3(0, 0, -near);
 
     // 1. translate PRP to origin
     let T = mat4x4T(prp)
