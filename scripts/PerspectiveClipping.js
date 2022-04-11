@@ -1,26 +1,17 @@
 // Clip line - should either return a new line (with two endpoints inside view volume) or null (if line is completely outside view volume)
 function clipLinePerspective(line) {
-    let p0 = vector4FromArray(line.p0.data);
-    let p1 = vector4FromArray(line.p1.data);
-
-    let zMin = Math.min(line.p0.z, line.p0.z)
-    let out0 = outcodePerspective(p0, zMin);
-    let out1 = outcodePerspective(p1, zMin);
+    let zMin = Math.min(line.p0.z, line.p1.z)
+    let out0 = outcodePerspective(line.p0, zMin);
+    let out1 = outcodePerspective(line.p1, zMin);
 
     if (canTrivialAccept(out0, out1)) {
-        return makeLine(p0, p1)
+        return line
     }
     if (canTrivialReject(out0, out1)) {
         return null
     }
 
-    p0 = clipPointPerspective(p0, out0)
-    p1 = clipPointPerspective(p1, out1)
-
-    console.log(p0)
-    console.log(p1)
-
-    return makeLine(p0, p1)
+    return investigateFurther(line, out0, out1)
 }
 
 // Get outcode for vertex (perspective view volume)
@@ -49,16 +40,25 @@ function outcodePerspective(vertex, z_min) {
 
 // p: Vector4
 // outcode: Number
-function clipPointPerspective(p, outcode) {
-    let newPoint = p
-    for (let edge in [LEFT, RIGHT, BOTTOM, TOP, FAR, NEAR]) {
-        let edgeCode = Number(edge)
+function investigateFurther(line, out0, out1) {
+    let newP0 = clipPointToViewVolume(line.p0, line.p1, out0)
+    let newP1 = clipPointToViewVolume(newP0, line.p1, out1)
 
-        if (outcode & edgeCode !== 0) {
-            newPoint = findIntersectionPerspective(newPoint, edgeCode)
+    return makeLine(newP0, newP1)
+}
+
+function clipPointToViewVolume(clipPoint, otherPoint, outcode) {
+    let clippedPoint = clipPoint
+
+    // attempt to clip against each edge
+    for (let edge of [LEFT, RIGHT, BOTTOM, TOP, FAR, NEAR]) {
+
+        // check if point's outcode
+        if ((outcode & edge) !== 0) {
+            clippedPoint = findIntersectionPerspective(makeLine(clippedPoint, otherPoint), edge)
         }
     }
-    return newPoint
+    return clippedPoint
 }
 
 function findIntersectionPerspective(line, edge) {

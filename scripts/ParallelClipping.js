@@ -1,7 +1,7 @@
 // Clip line - should either return a new line (with two endpoints inside view volume) or null (if line is completely outside view volume)
 function clipLineParallel(line) {
-    let p0 = vector4FromArray(line.p0.data);
-    let p1 = vector4FromArray(line.p1.data);
+    let p0 = line.p0
+    let p1 = line.p1
 
     let out0 = outcodeParallel(p0);
     let out1 = outcodeParallel(p1);

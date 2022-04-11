@@ -35,8 +35,6 @@ function mat4x4Npar(prp, srp, vup, clip) {
 function mat4x4Nper(prp, srp, vup, clip) {
     let [left, right, bottom, top, near, far] = clip
 
-    let dop = Vector3((left + right)/2, (bottom + top)/2, -near);
-
     // 1. translate PRP to origin
     let T = mat4x4T(prp)
 
@@ -44,6 +42,7 @@ function mat4x4Nper(prp, srp, vup, clip) {
     let R = mat4x4R(prp, srp, vup)
 
     // 3. shear such that CW is on the z-axis
+    let dop = Vector3((left + right)/2, (bottom + top)/2, -near);
     let SHx = -(dop.x)/dop.z;
     let SHy = -(dop.y)/dop.z;
 

@@ -121,7 +121,7 @@ function drawScene() {
                 p1 = N.mult(p1)
 
                 // clip in 3D
-                let line = makeLine(p0, p1)
+                let line = makeLine(vector4FromArray(p0.data),vector4FromArray(p1.data))
 
                 if (scene.view.type === PERSPECTIVE){
                     line = clipLinePerspective(line)
