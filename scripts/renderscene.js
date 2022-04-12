@@ -13,8 +13,8 @@ const FAR =    2;  // binary 000010
 const NEAR =   1;  // binary 000001
 const FLOAT_EPSILON = 0.000001;
 
-const PERSPECTIVE = 'perspective'
-const PARALLEL = 'parallel'
+const PERSPECTIVE = 'perspective';
+const PARALLEL = 'parallel';
 
 // Initialization function - called when web page loads
 function init() {
@@ -61,28 +61,26 @@ function init() {
                     [4, 9]
                 ],
                 matrix: new Matrix(4, 4)
-            },
+            }, {
+                type: "cube",
+                center: [4, 4, -10],
+                width: 8,
+                height: 8,
+                depth: 8
+            }/*,
             {
-                type: 'generic',
-                vertices: [
-                    Vector4(0, 30, -40, 1),
-                    Vector4(0, 40, -40, 1) ,  
-                    Vector4(-10, 30, -40, 1),
-                    Vector4(-10, 40, -40, 1), 
-                    Vector4(0, 30, -50, 1),
-                    Vector4(0, 40, -50, 1), 
-                    Vector4(-10, 30, -50, 1),
-                    Vector4(-10, 40, -50, 1)
-                ],
-                edges: [
-                    [0,1,3, 2, 0],
-                    [4,5,7,6,4],
-                    [0,4], 
-                    [3,7], 
-                    [2,6],
-                    [1,5]
-                ]
-            }
+                type: "cylinder",
+                center: [12, 10, -49],
+                radius: 1.5,
+                height: 5,
+                sides: 12
+                /*
+                "animation": {
+                    "axis": "y",
+                    "rps": 0.5
+                }
+                */
+        
         ]
     };
 
@@ -102,7 +100,7 @@ function animate(timestamp) {
     let time = timestamp - start_time;
     
     // step 2: transform models based on time
-    // TODO: implement this!
+    //if ()
 
     // step 3: draw scene
     drawScene();
@@ -111,11 +109,49 @@ function animate(timestamp) {
     // (may want to leave commented out while debugging initially)
     window.requestAnimationFrame(animate);
 }
+//centerPoint, width, height, depth
+function setCube(centerPoint, width, height, depth) {
+    let vertices;
+    vertices: [Vector4(0, 30, -40, 1), Vector4(0, 40, -40, 1) ,  
+        Vector4(-10, 30, -40, 1),
+        Vector4(-10, 40, -40, 1), 
+        Vector4(0, 30, -50, 1),
+        Vector4(0, 40, -50, 1), 
+        Vector4(-10, 30, -50, 1),
+        Vector4(-10, 40, -50, 1)];
+    /*
+    vertices[0] = Vector4(0, 30, -40, 1);
+    scene.models.vertices[1] = Vector4(0, 40, -40, 1);
+    scene.models.vertices[2] = Vector4(-10, 30, -40, 1);
+    scene.models.vertices[3] = Vector4(-10, 40, -40, 1);
+    scene.models.vertices[4] = Vector4(0, 30, -50, 1);
+    scene.models.vertices[5] = Vector4(0, 40, -50, 1);
+    scene.models.vertices[6] = Vector4(-10, 30, -50, 1)
+    scene.models.vertices[7] = Vector4(-10, 40, -50, 1)
+    */
+    let edges;
+    edges: [0, 1, 2, 3, 4, 0];
+    let model = [vertices][edges]
+
+    /*
+    edge[0] = vertices[0];
+    edge[1] = vertices[1];
+    edge[2] = vertices[3];
+    edge[3] = vertices[2];
+    */
+    
+    
+}
+
 
 // Main drawing code - use information contained in variable `scene`
 function drawScene() {
     // console.log("CALL: drawScene()")
     // console.log("SCENE: ", scene);
+    //loadNewScene();
+    setCube();
+
+    //need to add the clear screen call
 
     let N
     let M
@@ -129,7 +165,11 @@ function drawScene() {
 
     let V = mat4x4V(view.width, view.height)
 
+
     for (let model of scene.models){
+        if(model.type == "cube") {
+            setCube();
+        }
         for (let edge of model.edges){
 
             // an edge can have multiple lines, so we need to iterate through each vertex, two at a time
@@ -177,12 +217,27 @@ function onKeyDown(event) {
         case 37: // LEFT Arrow
             console.log("left");
             let v = calcV(scene.view.prp, scene.view.srp, scene.view.vup);
+            //move prp to origin 
+            let T1 = mat4x4T(scene.view.prp);
+            //rotate the VRC such that (u,v,n) align with (x,y,z)
+            let R = mat4x4R(prp, srp, vup)
+
+            let origin = R.mult(T1);
+            
+
+            //rotate the SRP based on v?
+
+            //move back?
+
+            //multiplying 5 matrices: one to move, rotate vrc, rotate y , un rotate the VRC, move back to orignal spot.
+
             scene.view.prp.x += 1
             scene.view.srp.x += 1
             break;
         case 39: // RIGHT Arrow
             console.log("right");
             let v0 = calcV(scene.view.prp, scene.view.srp, scene.view.vup);
+            let T = mat4x4T(scene.view.prp);
             scene.view.prp.x -= 1
             scene.view.srp.x -= 1
             break;
@@ -260,6 +315,7 @@ function onKeyDown(event) {
                 }
                 scene.models[i].matrix = new Matrix(4, 4);
             }
+            drawScene()
         };
         reader.readAsText(scene_file.files[0], 'UTF-8');
     }
