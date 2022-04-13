@@ -94,8 +94,6 @@ function init() {
 
 // Animation loop - repeatedly calls rendering code
 function animate(timestamp) {
-    ctx.clearRect(0, 0, view.width, view.height)
-
     // step 1: calculate time (time since start)
     let time = timestamp - start_time;
     
@@ -108,7 +106,7 @@ function animate(timestamp) {
     // step 4: request next animation frame (recursively calling same function)
     // (may want to leave commented out while debugging initially)
     // setTimeout( () => window.requestAnimationFrame(animate), 1000)   // used for slowing down console input
-    window.requestAnimationFrame(animate)
+    // window.requestAnimationFrame(animate)
 
 }
 //centerPoint, width, height, depth
@@ -151,7 +149,7 @@ function drawScene() {
         if(model.type === "cube") {
             setCube(model, model.center, model.width, model.height, model.depth);
         }
-
+        console.log("hello")
         let vertices = model.vertices.map((vertex) =>
             vector4FromMatrix(N.mult(vertex))
         )
@@ -216,10 +214,7 @@ function clipLines(lines) {
  */
 function makeLines(edge, vertices){
     return zipWithNext(edge).map( (indexPair) =>
-        new Line(
-            copyVertex4(vertices[indexPair[0]]),
-            copyVertex4(vertices[indexPair[1]])
-        )
+        new Line(vertices[indexPair[0]], vertices[indexPair[1]])
     )
 }
 
