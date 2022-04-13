@@ -15,11 +15,15 @@ function clipLinePerspective(line) {
         return null
     }
 
-    // console.log("d")
     return investigateFurther(line, out0, out1)
 }
 
-// Get outcode for vertex (perspective view volume)
+/**
+ * Get outcode for vertex (perspective view volume)
+ * @param vertex {Vector}
+ * @param z_min {number}
+ * @returns {number}
+ */
 function outcodePerspective(vertex, z_min) {
     let outcode = 0;
     if (vertex.x < (vertex.z - FLOAT_EPSILON)) {
@@ -44,7 +48,7 @@ function outcodePerspective(vertex, z_min) {
 }
 
 /**
- *
+ * chooses which point of the line to clip, clips the point, and returns a new line
  * @param line {Line}
  * @param out0 {number}
  * @param out1 {number}
@@ -52,33 +56,37 @@ function outcodePerspective(vertex, z_min) {
  */
 function investigateFurther(line, out0, out1) {
     if (out0 !== 0) {
-        clipPointToViewVolume(line.p0, line.p1, out0)
+        return clipPointToViewVolume(line.p0, line.p1, out0)
     } else{
-        clipPointToViewVolume(line.p1, line.p0, out1)
+        return clipPointToViewVolume(line.p1, line.p0, out1)
     }
-
-    return line
 }
 
+/**
+ * @param clipPoint {Vector}
+ * @param otherPoint {Vector}
+ * @param outcode {number}
+ * @returns {Line} new Line after clipPoint has been clipped
+ */
 function clipPointToViewVolume(clipPoint, otherPoint, outcode) {
-    let line = new Line(clipPoint, otherPoint)
+    let line = new Line(clipPoint, copyVertex4(otherPoint))
 
     // attempt to clip against each edge
     for (let edge of [LEFT, RIGHT, BOTTOM, TOP, NEAR, FAR]) {
 
         // check if point's outcode
         if ((outcode & edge) !== 0) {
-            let intersection = findIntersectionPerspective(line, edge)
-            copyVertex4(line.p0, intersection)
+            line.p0 = findIntersectionPerspective(line, edge)
         }
     }
-    return line.p0
+    return line
 }
 
 /**
- *
- * @param line {Line} order of vertices matters - (clipPoint, otherPoint)
+ * finds the point where line intersections with viewVolumeEdge
+ * @param line {Line}
  * @param viewVolumeEdge {number} LEFT, RIGHT, BOTTOM, TOP, NEAR, FAR)
+ * @return {Vector} intersection point
  */
 function findIntersectionPerspective(line, viewVolumeEdge) {
     let [deltaX, deltaY, deltaZ] = calcDeltas3D(line)

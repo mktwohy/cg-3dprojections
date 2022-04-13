@@ -81,9 +81,17 @@ function zipWithNext(list) {
  * @param destination {Vector}
  * @param source {Vector}
  */
-function copyVertex4(destination, source) {
+function copyVertex4Values(destination, source) {
     destination.x = source.x
     destination.y = source.y
     destination.z = source.z
     destination.w = source.w
+}
+
+/**
+ * create a copy of a Vector
+ * @param source {Vector}
+ */
+function copyVertex4(source) {
+    return new Vector4(source.x, source.y, source.z, source.w)
 }

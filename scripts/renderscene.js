@@ -113,7 +113,7 @@ function animate(timestamp) {
     let time = timestamp - start_time;
     
     // step 2: transform models based on time
-    //if ()
+
 
     // step 3: draw scene
     drawScene();
@@ -191,7 +191,7 @@ function drawScene() {
 
 
     for (let model of scene.models){
-        if(model.type == "cube") {
+        if(model.type === "cube") {
             setCube(model, model.center, model.width, model.height, model.depth);
         } else if(model.type == "cone") {
             setCone(model, model.center, model.radius, model.height, model.sides);
@@ -208,7 +208,6 @@ function drawScene() {
                 projectTo2d(lines, V, M)
 
                 drawLines(lines)
-        
         }
     }
 }
@@ -263,7 +262,10 @@ function clipLines(lines) {
  */
 function makeLines(edge, vertices){
     return zipWithNext(edge).map( (indexPair) =>
-        new Line(vertices[indexPair[0]], vertices[indexPair[1]])
+        new Line(
+            copyVertex4(vertices[indexPair[0]]),
+            copyVertex4(vertices[indexPair[1]])
+        )
     )
 }
 
