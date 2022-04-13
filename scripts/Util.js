@@ -23,17 +23,22 @@ function canTrivialReject(out0, out1) {
     return out0 & out1 !== 0
 }
 
-/**
- * creates a line from two vectors
- * @param p0 Vector4
- * @param p1 Vector4
- * @returns {{p0, p1}}
- */
-function makeLine(p0, p1) {
-    return { p0: p0, p1: p1 }
-}
-
 function vector4FromArray(array) {
     let [x2, y2, z3, w4] = array
     return Vector4(x2, y2, z3, w4)
+}
+
+function vector4FromMatrix(matrix) {
+    return vector4FromArray(matrix.data)
+}
+
+function zipWithNext(list) {
+    let zipped = []
+    for (let i = 0; i < list.length - 1; i++) {
+        let a = list[i]
+        let b = list[i+1]
+        zipped.push([a, b])
+    }
+
+    return zipped
 }

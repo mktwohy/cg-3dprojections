@@ -1,4 +1,8 @@
-// Clip line - should either return a new line (with two endpoints inside view volume) or null (if line is completely outside view volume)
+/**
+ * should either return a new line (with two endpoints inside view volume) or null (if line is completely outside view volume)
+ * @param line {Line}
+ * @returns {null|Line|*}
+ */
 function clipLinePerspective(line) {
     let zMin = Math.min(line.p0.z, line.p1.z)
     let out0 = outcodePerspective(line.p0, zMin);
@@ -11,6 +15,7 @@ function clipLinePerspective(line) {
         return null
     }
 
+    // console.log("d")
     return investigateFurther(line, out0, out1)
 }
 
@@ -38,13 +43,21 @@ function outcodePerspective(vertex, z_min) {
     return outcode;
 }
 
-// p: Vector4
-// outcode: Number
+/**
+ *
+ * @param line {Line}
+ * @param out0 {number}
+ * @param out1 {number}
+ * @returns {Line}
+ */
 function investigateFurther(line, out0, out1) {
-    let newP0 = clipPointToViewVolume(line.p0, line.p1, out0)
-    let newP1 = clipPointToViewVolume(newP0, line.p1, out1)
+    if (out0 !== 0) {
+        clipPointToViewVolume(line.p0, line.p1, out0)
+    } else{
+        clipPointToViewVolume(line.p1, line.p0, out1)
+    }
 
-    return makeLine(newP0, newP1)
+    return line
 }
 
 function clipPointToViewVolume(clipPoint, otherPoint, outcode) {
@@ -55,7 +68,7 @@ function clipPointToViewVolume(clipPoint, otherPoint, outcode) {
 
         // check if point's outcode
         if ((outcode & edge) !== 0) {
-            clippedPoint = findIntersectionPerspective(makeLine(clippedPoint, otherPoint), edge)
+            findIntersectionPerspective(new Line(clippedPoint, otherPoint), edge)
         }
     }
     return clippedPoint
@@ -106,5 +119,8 @@ function findIntersectionPerspective(line, edge) {
         default:
             x = 0; y = 0; z = 0
     }
-    return Vector4(x, y, z, 1)
+
+    line.p0.x = x
+    line.p0.y = y
+    line.p0.z = z
 }

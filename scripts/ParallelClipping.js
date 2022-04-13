@@ -7,7 +7,7 @@ function clipLineParallel(line) {
     let out1 = outcodeParallel(p1);
 
     if (canTrivialAccept(out0, out1)) {
-        return makeLine(p0, p1)
+        return line
     }
     if (canTrivialReject(out0, out1)) {
         return null
@@ -16,7 +16,7 @@ function clipLineParallel(line) {
     p0 = clipPointParallel(p0, out0)
     p1 = clipPointParallel(p1, out1)
 
-    return makeLine(p0, p1)
+    return new Line(p0, p1)
 }
 
 // Get outcode for vertex (parallel view volume)

@@ -109,7 +109,9 @@ function animate(timestamp) {
 
     // step 4: request next animation frame (recursively calling same function)
     // (may want to leave commented out while debugging initially)
-    window.requestAnimationFrame(animate);
+    // setTimeout( () => window.requestAnimationFrame(animate), 1000)   // used for slowing down console input
+    window.requestAnimationFrame(animate)
+
 }
 
 // Main drawing code - use information contained in variable `scene`
@@ -117,58 +119,78 @@ function drawScene() {
     // console.log("CALL: drawScene()")
     // console.log("SCENE: ", scene);
 
-    let N
-    let M
-    if (scene.view.type === PERSPECTIVE){
-        N = mat4x4Nper(scene.view.prp, scene.view.srp, scene.view.vup, scene.view.clip)
-        M = mat4x4Mper()
-    } else {
-        N = mat4x4Npar(scene.view.prp, scene.view.srp, scene.view.vup, scene.view.clip)
-        M = mat4x4Mpar()
-    }
-
+    let N = mat4x4N(scene.view.type, scene.view.prp, scene.view.srp, scene.view.vup, scene.view.clip)
+    let M = mat4x4M(scene.view.type)
     let V = mat4x4V(view.width, view.height)
 
     for (let model of scene.models){
+        // copy vertices and multiply each one by N
+        let vertices = model.vertices.map( (vertex) =>
+            N.mult(vertex)
+        )
+
         for (let edge of model.edges){
+            let lines = clipLines(makeLines(edge, vertices))
 
-            // an edge can have multiple lines, so we need to iterate through each vertex, two at a time
-            for (let i = 0; i < edge.length - 1; i++) {
-                let p0 = model.vertices[edge[i]]
-                let p1 = model.vertices[edge[i+1]]
+            projectTo2d(lines, V, M)
 
-                // multiply by N
-                p0 = N.mult(p0)
-                p1 = N.mult(p1)
-
-                // clip in 3D
-                let line = makeLine(vector4FromArray(p0.data),vector4FromArray(p1.data))
-
-                if (scene.view.type === PERSPECTIVE){
-                    line = clipLinePerspective(line)
-                } else {
-                    line = clipLineParallel(line)
-                }
-
-                p0 = vector4FromArray(line.p0.data)
-                p1 = vector4FromArray(line.p1.data)
-
-                // clipLineParallel/Perspective() can return null, so we need to check
-                if (p0 !== null && p1 !== null) {
-                    // project to 2D
-                    p0 = Matrix.multiply([V, M, p0])
-                    p1 = Matrix.multiply([V, M, p1])
-
-                    // convert back to vector (mult() returns a 4x4 matrix)
-                    p0 = vector4FromArray(p0.data)
-                    p1 = vector4FromArray(p1.data)
-
-                    // draw line
-                    drawLine(p0.x/p0.w, p0.y/p0.w, p1.x/p1.w, p1.y/p1.w)
-                }
-            }
+            drawLines(lines)
         }
     }
+}
+
+/**
+ * Draws lines to screen. Z component of vertices are ignored.
+ * @param lines {Line[]}
+ */
+function drawLines(lines) {
+    for (let line of lines) {
+        let p0 = vector4FromMatrix(line.p0)
+        let p1 = vector4FromMatrix(line.p1)
+        drawLine(p0.x/p0.w, p0.y/p0.w, p1.x/p1.w, p1.y/p1.w)
+    }
+}
+
+/**
+ * Note - Does not create new lines or vertices. Vertices are mutated.
+ * @param lines {Line[]}
+ * @param V {Matrix}
+ * @param M {Matrix} model matrix
+ */
+function projectTo2d(lines, V, M) {
+    for (let line of lines) {
+        line.p0 = Matrix.multiply([V, M, line.p0])
+        line.p1 = Matrix.multiply([V, M, line.p1])
+    }
+}
+
+/**
+ * Clips line points to view volume. If clip results in null, it will not appear in the list.
+ * @param lines {Line[]}
+ * @returns {Line[]}
+ */
+function clipLines(lines) {
+    return lines
+        .map( (line) => {
+            if (scene.view.type === PERSPECTIVE)
+                return clipLinePerspective(line)
+            else
+                return clipLineParallel(line)
+        })
+        .filter( (line) =>
+            line !== null
+        )
+}
+
+/**
+ * @param edge {[Number[]]} a single edge (from scene.model.edges)
+ * @param vertices {Vector[]} list of vertices (from scene.model)
+ * @returns {Line[]} list of Lines
+ */
+function makeLines(edge, vertices){
+    return zipWithNext(edge).map( (indexPair) =>
+        new Line(vertices[indexPair[0]], vertices[indexPair[1]])
+    )
 }
 
 // Called when user presses a key on the keyboard down 

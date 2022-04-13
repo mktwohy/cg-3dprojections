@@ -1,3 +1,26 @@
+/**
+ * calls either mat4x4Nper or mat4x4Npar, depending on the current projection type
+ * @returns {Matrix}
+ */
+function mat4x4N(projectionType, prp, srp, vup, clip) {
+    if (projectionType === PERSPECTIVE){
+        return mat4x4Nper(prp, srp, vup, clip)
+    } else {
+        return mat4x4Npar(prp, srp, vup, clip)
+    }
+}
+
+/**
+ * calls either mat4x4Mper or mat4x4Mpar, depending on the current projection type
+ * @returns {Matrix}
+ */
+function mat4x4M(projectionType) {
+    if (projectionType === PERSPECTIVE){
+        return mat4x4Mper()
+    } else {
+        return mat4x4Mpar()
+    }
+}
 
 // create a 4x4 matrix to the parallel projection / view matrix
 function mat4x4Npar(prp, srp, vup, clip) {
