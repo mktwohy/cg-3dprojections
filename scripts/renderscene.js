@@ -68,31 +68,26 @@ function init() {
                 width: 10,
                 height: 10,
                 depth: 10
-
             }, 
             {
                 type: "cone",
-                center: [-80, 60, -60],
+                center: [-80, 60, -45],
                 radius: 15,
                 height: 25,
                 sides: 12
-            }
-            
-            
-            /*
+            },
             {
                 type: "cylinder",
-                center: [12, 10, -49],
-                radius: 1.5,
-                height: 5,
-                sides: 12
-                /*
-                "animation": {
-                    "axis": "y",
-                    "rps": 0.5
-                
+                center: [-80, 55, -80],
+                radius: 20,
+                height: 20,
+                sides: 12,
+                animation: {
+                    axis: 'y',
+                    rps: 0.5
+                }
             }
-            */   
+
 
         ]
     };
@@ -156,21 +151,62 @@ function setCone(model, centerPoint, radius, height, sides) {
     let coneedges = [];
     conevertices.push(top);
     conevertices.push(starting);
+    coneedges.push([0, 1]);
     for (let i = 2; i <= sides+1; i++) {
         newAngle += degrees;
-        if (degrees > 360) {
+        if (newAngle >= 360) {
             break;
         }
         //(centerPoint[1] + (radius * Math.sin(newAngle* Math.PI / 180)))
-        placeHolder = Vector4((centerPoint[0] + (radius * Math.cos(newAngle * Math.PI / 180))), centerPoint[1], centerPoint[2], 1);
+        placeHolder = Vector4((centerPoint[0] + (radius * Math.cos(newAngle * Math.PI / 180))), (centerPoint[1] + (radius * Math.sin(newAngle* Math.PI / 180))), centerPoint[2], 1);
         conevertices.push(placeHolder)
         coneedges.push([i-1, i])
         coneedges.push([0,i])
     }
+    coneedges.push([1, sides]);
+
 
     model.vertices = conevertices;
     model.edges = coneedges;
 
+}
+
+function setCylinder(model, centerPoint, radius, height, sides) {
+    let degrees1 = (360/sides);
+    let newAngle1 = 0;
+    let centery1 = centerPoint[1]+(height/2)
+    let centery2 = centerPoint[1]-(height/2)
+    let cylvertices = [];
+    let cyledges = [];
+    let a = Vector4(centerPoint[0]+radius, centery1, centerPoint[2], 1);
+    let b = Vector4(centerPoint[0]+radius, centery2, centerPoint[2], 1)
+    cylvertices.push(a);
+    cylvertices.push(b)
+    let placeHolder1;
+    let topcount = 0;
+    let bottomcount =1; 
+    for (let k = 1; k <= sides; k++) {
+        newAngle1 += degrees1;
+        if (newAngle1>= 360) {
+            break;
+        }
+        placeHolder1 = Vector4((centerPoint[0] + (radius * Math.cos(newAngle1 * Math.PI / 180))), centery1, centerPoint[2], 1);
+        cylvertices.push(placeHolder1)
+        cyledges.push([topcount, topcount+2])
+        
+
+        placeHolder1 = Vector4((centerPoint[0] + (radius * Math.cos(newAngle1 * Math.PI / 180))), centery2, centerPoint[2], 1);
+        cylvertices.push(placeHolder1)
+        cyledges.push([bottomcount, bottomcount+2])
+
+        cyledges.push([topcount, bottomcount])
+
+        topcount = topcount + 2;
+        bottomcount = bottomcount + 2;
+    }
+
+    model.vertices = cylvertices;
+    model.edges = cyledges;
 }
 
 
@@ -191,6 +227,8 @@ function drawScene() {
             setCube(model, model.center, model.width, model.height, model.depth);
         } else if(model.type == "cone") {
             setCone(model, model.center, model.radius, model.height, model.sides);
+        } else if(model.type == "cylinder") {
+            setCylinder(model, model.center, model.radius, model.height, model.sides);
         }
         let vertices = model.vertices.map((vertex) =>
             vector4FromMatrix(N.mult(vertex))
