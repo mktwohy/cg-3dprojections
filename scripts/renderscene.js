@@ -61,13 +61,25 @@ function init() {
                     [4, 9]
                 ],
                 matrix: new Matrix(4, 4)
-            }, {
+            }, 
+            {
                 type: "cube",
-                center: Vector3(4, 4, -10),
-                width: 8,
-                height: 8,
-                depth: 8
-            }/*,
+                center: Vector3(-5, 45, -80),
+                width: 10,
+                height: 10,
+                depth: 10
+
+            }, 
+            {
+                type: "cone",
+                center: [-80, 60, -60],
+                radius: 15,
+                height: 25,
+                sides: 12
+            }
+            
+            
+            /*
             {
                 type: "cylinder",
                 center: [12, 10, -49],
@@ -78,8 +90,9 @@ function init() {
                 "animation": {
                     "axis": "y",
                     "rps": 0.5
-                }
-                */
+                
+            }
+            */   
 
         ]
     };
@@ -111,24 +124,53 @@ function animate(timestamp) {
 }
 //centerPoint, width, height, depth
 function setCube(model, centerPoint, width, height, depth) {
-    let cubex = centerPoint.x - (centerPoint.y/2);
-    let cubey = 0;
-
+    let cubex1 = centerPoint.x + (width/2); //0
+    let cubex2 = centerPoint.x - (width/2); //-10
+    let cubey1 = centerPoint.y - (height/2); //40
+    let cubey2 = centerPoint.y + (height/2); //50
+    let cubez1 = centerPoint.z + (depth/2);
+    let cubez2 = centerPoint.z - (depth/2);
 
     let vertices1= [
-        Vector4(0, 30, -40, 1), 
-        Vector4(0, 40, -40, 1),  
-        Vector4(-10, 30, -40, 1),
-        Vector4(-10, 40, -40, 1), 
-        Vector4(0, 30, -50, 1),
-        Vector4(0, 40, -50, 1), 
-        Vector4(-10, 30, -50, 1),
-        Vector4(-10, 40, -50, 1)];
+        Vector4(cubex1, cubey1, cubez1, 1), 
+        Vector4(cubex1, cubey2, cubez1, 1),  
+        Vector4(cubex2, cubey1, cubez1, 1),
+        Vector4(cubex2, cubey2, cubez1, 1), 
+        Vector4(cubex1, cubey1, cubez2, 1),
+        Vector4(cubex1, cubey2, cubez2, 1), 
+        Vector4(cubex2, cubey1, cubez2, 1),
+        Vector4(cubex2, cubey2, cubez2, 1)];
     model.vertices = vertices1;
     
     let edges1 = [[0, 1], [1,3], [3,2], [0,2], [4,5], [5,7], [7,6], [4,6], [0,4], [3,7], [2,6], [1,5]];
     model.edges = edges1;
-    //[4,5], [5,7], [7,6], [6,4], [0,4], [3,7], [2,6], [1,5]
+}
+
+function setCone(model, centerPoint, radius, height, sides) {
+    let degrees = (360/sides);
+    let newAngle = 0;
+    let starting = Vector4(centerPoint[0]+radius, centerPoint[1], centerPoint[2], 1);
+    let top = Vector4(centerPoint[0], centerPoint[1]+height, centerPoint[2], 1);
+    let placeHolder;
+    let conevertices = [];
+    let coneedges = [];
+    conevertices.push(top);
+    conevertices.push(starting);
+    for (let i = 2; i <= sides+1; i++) {
+        newAngle += degrees;
+        if (degrees > 360) {
+            break;
+        }
+        //(centerPoint[1] + (radius * Math.sin(newAngle* Math.PI / 180)))
+        placeHolder = Vector4((centerPoint[0] + (radius * Math.cos(newAngle * Math.PI / 180))), centerPoint[1], centerPoint[2], 1);
+        conevertices.push(placeHolder)
+        coneedges.push([i-1, i])
+        coneedges.push([0,i])
+    }
+
+    model.vertices = conevertices;
+    model.edges = coneedges;
+
 }
 
 
@@ -147,6 +189,8 @@ function drawScene() {
     for (let model of scene.models){
         if(model.type === "cube") {
             setCube(model, model.center, model.width, model.height, model.depth);
+        } else if(model.type == "cone") {
+            setCone(model, model.center, model.radius, model.height, model.sides);
         }
         let vertices = model.vertices.map((vertex) =>
             vector4FromMatrix(N.mult(vertex))
