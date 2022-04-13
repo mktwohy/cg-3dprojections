@@ -188,21 +188,20 @@ function onKeyDown(event) {
             break;
         case 65: // A key
             console.log("A");
-            let u = calcU(scene.view.prp, scene.view.srp, scene.view.vup);
-            let u4 = scene.view.prp.subtract(u)
-            let u5 = scene.view.srp.subtract(u)
-
-            scene.view.prp = u4
-            scene.view.srp = u5
-            break;
-        case 68: // D key
-            console.log("D");
             let u1 = calcU(scene.view.prp, scene.view.srp, scene.view.vup);
             let u0 = scene.view.prp.add(u1)
             let u2 = scene.view.srp.add(u1)
 
             scene.view.prp = u0
             scene.view.srp = u2
+            break;
+        case 68: // D key
+            console.log("D");
+            let u = calcU(scene.view.prp, scene.view.srp, scene.view.vup);
+            let u4 = scene.view.prp.subtract(u)
+            let u5 = scene.view.srp.subtract(u)
+            scene.view.prp = u4
+            scene.view.srp = u5
             break;
         case 83: // S key
             console.log("S");
