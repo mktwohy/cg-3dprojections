@@ -40,12 +40,12 @@ function init() {
             {
                 type: 'generic',
                 vertices: [
-                    Vector4(0,  0, -30, 1),
+                    Vector4( 0,  0, -30, 1),
                     Vector4(20,  0, -30, 1),
                     Vector4(20, 12, -30, 1),
                     Vector4(10, 20, -30, 1),
-                    Vector4(0, 12, -30, 1),
-                    Vector4(0,  0, -60, 1),
+                    Vector4( 0, 12, -30, 1),
+                    Vector4( 0,  0, -60, 1),
                     Vector4(20,  0, -60, 1),
                     Vector4(20, 12, -60, 1),
                     Vector4(10, 20, -60, 1),
@@ -61,14 +61,12 @@ function init() {
                     [4, 9]
                 ],
                 matrix: new Matrix(4, 4)
-            }, /*{
+            }, {
                 type: "cube",
-                center: [4, 4, -10],
+                center: Vector3(4, 4, -10),
                 width: 8,
                 height: 8,
-                depth: 8,
-                vertices: [],
-                edges: []
+                depth: 8
             }/*,
             {
                 type: "cylinder",
@@ -82,7 +80,7 @@ function init() {
                     "rps": 0.5
                 }
                 */
-        
+
         ]
     };
 
@@ -114,27 +112,25 @@ function animate(timestamp) {
 
 }
 //centerPoint, width, height, depth
-function setCube(centerPoint, width, height, depth) {
-    let vertices1= [Vector4(0, 30, -40, 1), Vector4(0, 40, -40, 1),  
+function setCube(model, centerPoint, width, height, depth) {
+    let cubex = centerPoint.x - (centerPoint.y/2);
+    let cubey = 0;
+
+
+    let vertices1= [
+        Vector4(0, 30, -40, 1), 
+        Vector4(0, 40, -40, 1),  
         Vector4(-10, 30, -40, 1),
         Vector4(-10, 40, -40, 1), 
         Vector4(0, 30, -50, 1),
         Vector4(0, 40, -50, 1), 
         Vector4(-10, 30, -50, 1),
         Vector4(-10, 40, -50, 1)];
-    scene.models.vertices = vertices1;
+    model.vertices = vertices1;
     
-    let edges1 = [[0, 1], [1,3]];
-    scene.models.edges = edges1;
-
-    /*
-    edge[0] = vertices[0];
-    edge[1] = vertices[1];
-    edge[2] = vertices[3];
-    edge[3] = vertices[2];
-    */
-    
-    
+    let edges1 = [[0, 1], [1,3], [3,2], [0,2], [4,5], [5,7], [7,6], [4,6], [0,4], [3,7], [2,6], [1,5]];
+    model.edges = edges1;
+    //[4,5], [5,7], [7,6], [6,4], [0,4], [3,7], [2,6], [1,5]
 }
 
 
@@ -145,6 +141,7 @@ function drawScene() {
     //loadNewScene();
 
     //need to add the clear screen call
+    ctx.clearRect(0,0, view.width, view.height);
 
     let N = mat4x4N(scene.view.type, scene.view.prp, scene.view.srp, scene.view.vup, scene.view.clip)
     let M = mat4x4M(scene.view.type)
@@ -153,18 +150,21 @@ function drawScene() {
 
     for (let model of scene.models){
         if(model.type == "cube") {
-            setCube();
+            setCube(model, model.center, model.width, model.height, model.depth);
         }
-        //for (let edge of model.edges){
+        let vertices = model.vertices.map((vertex) => 
+            vector4FromMatrix(N.mult(vertex))
+        )
 
         for (let edge of model.edges){
-            let lines = makeLines(edge, vertices)
+                let lines = makeLines(edge, vertices)
 
-            lines = clipLines(lines)
+                lines = clipLines(lines)
 
-            projectTo2d(lines, V, M)
+                projectTo2d(lines, V, M)
 
-            drawLines(lines)
+                drawLines(lines)
+        
         }
     }
 }
