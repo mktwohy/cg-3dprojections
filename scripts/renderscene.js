@@ -138,8 +138,7 @@ function drawScene() {
     // console.log("SCENE: ", scene);
     //loadNewScene();
 
-    //need to add the clear screen call
-    ctx.clearRect(0,0, view.width, view.height);
+    clearScreen()
 
     let N = mat4x4N(scene.view.type, scene.view.prp, scene.view.srp, scene.view.vup, scene.view.clip)
     let M = mat4x4M(scene.view.type)
@@ -149,7 +148,6 @@ function drawScene() {
         if(model.type === "cube") {
             setCube(model, model.center, model.width, model.height, model.depth);
         }
-        console.log("hello")
         let vertices = model.vertices.map((vertex) =>
             vector4FromMatrix(N.mult(vertex))
         )
@@ -216,6 +214,10 @@ function makeLines(edge, vertices){
     return zipWithNext(edge).map( (indexPair) =>
         new Line(vertices[indexPair[0]], vertices[indexPair[1]])
     )
+}
+
+function clearScreen(){
+    ctx.clearRect(0,0, view.width, view.height);
 }
 
 // Called when user presses a key on the keyboard down 
