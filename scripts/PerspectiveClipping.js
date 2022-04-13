@@ -61,17 +61,17 @@ function investigateFurther(line, out0, out1) {
 }
 
 function clipPointToViewVolume(clipPoint, otherPoint, outcode) {
-    let clippedPoint = clipPoint
+    let line = new Line(clipPoint, otherPoint)
 
     // attempt to clip against each edge
     for (let edge of [LEFT, RIGHT, BOTTOM, TOP, FAR, NEAR]) {
 
         // check if point's outcode
         if ((outcode & edge) !== 0) {
-            findIntersectionPerspective(new Line(clippedPoint, otherPoint), edge)
+            findIntersectionPerspective(line, edge)
         }
     }
-    return clippedPoint
+    return line.p0
 }
 
 function findIntersectionPerspective(line, edge) {
@@ -81,7 +81,7 @@ function findIntersectionPerspective(line, edge) {
 
     switch(edge) {
         case LEFT:
-            t = -(line.p0.x + line.p0.z) / deltaX
+            t = -(line.p0.x + line.p0.z) / (deltaX - deltaZ)
             z = parametricXYZ(line.p0.z, line.p1.z, t)
             x = z
             y = parametricXYZ(line.p0.y, line.p1.y, t)
@@ -123,4 +123,5 @@ function findIntersectionPerspective(line, edge) {
     line.p0.x = x
     line.p0.y = y
     line.p0.z = z
+    line.p0.w = 1
 }

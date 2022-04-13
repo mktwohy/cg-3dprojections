@@ -189,7 +189,10 @@ function clipLines(lines) {
  */
 function makeLines(edge, vertices){
     return zipWithNext(edge).map( (indexPair) =>
-        new Line(vertices[indexPair[0]], vertices[indexPair[1]])
+        new Line(
+            vector4FromMatrix(vertices[indexPair[0]]),
+            vector4FromMatrix(vertices[indexPair[1]])
+        )
     )
 }
 

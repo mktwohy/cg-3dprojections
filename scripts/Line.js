@@ -1,6 +1,5 @@
 class Line {
     /**
-     *
      * @param p0 {Vector}
      * @param p1 {Vector}
      */
