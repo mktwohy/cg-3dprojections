@@ -149,7 +149,7 @@ function drawScene() {
 
 
     for (let model of scene.models){
-        if(model.type == "cube") {
+        if(model.type === "cube") {
             setCube(model, model.center, model.width, model.height, model.depth);
         }
         let vertices = model.vertices.map((vertex) => 
@@ -218,7 +218,10 @@ function clipLines(lines) {
  */
 function makeLines(edge, vertices){
     return zipWithNext(edge).map( (indexPair) =>
-        new Line(vertices[indexPair[0]], vertices[indexPair[1]])
+        new Line(
+            copyVertex4(vertices[indexPair[0]]),
+            copyVertex4(vertices[indexPair[1]])
+        )
     )
 }
 

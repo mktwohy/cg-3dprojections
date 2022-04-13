@@ -18,7 +18,12 @@ function clipLinePerspective(line) {
     return investigateFurther(line, out0, out1)
 }
 
-// Get outcode for vertex (perspective view volume)
+/**
+ * Get outcode for vertex (perspective view volume)
+ * @param vertex {Vector}
+ * @param z_min {number}
+ * @returns {number}
+ */
 function outcodePerspective(vertex, z_min) {
     let outcode = 0;
     if (vertex.x < (vertex.z - FLOAT_EPSILON)) {
@@ -78,9 +83,10 @@ function clipPointToViewVolume(clipPoint, otherPoint, outcode) {
 }
 
 /**
- *
- * @param line {Line} where p0 = clipPoint and
+ * finds the point where line intersections with viewVolumeEdge
+ * @param line {Line}
  * @param viewVolumeEdge {number} LEFT, RIGHT, BOTTOM, TOP, NEAR, FAR)
+ * @return {Vector} intersection point
  */
 function findIntersectionPerspective(line, viewVolumeEdge) {
     let [deltaX, deltaY, deltaZ] = calcDeltas3D(line)
