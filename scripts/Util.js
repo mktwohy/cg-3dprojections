@@ -93,7 +93,5 @@ function copyVertex4Values(destination, source) {
  * @param source {Vector}
  */
 function copyVertex4(source) {
-    let copy = new Vector4(0, 0, 0, 0)
-    copyVertex4Values(copy, source)
-    return copy
+    return new Vector4(source.x, source.y, source.z, source.w)
 }
