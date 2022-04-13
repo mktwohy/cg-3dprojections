@@ -147,24 +147,22 @@ function drawScene() {
     let M = mat4x4M(scene.view.type)
     let V = mat4x4V(view.width, view.height)
 
-
     for (let model of scene.models){
         if(model.type === "cube") {
             setCube(model, model.center, model.width, model.height, model.depth);
         }
-        let vertices = model.vertices.map((vertex) => 
+
+        let vertices = model.vertices.map((vertex) =>
             vector4FromMatrix(N.mult(vertex))
         )
 
-        for (let edge of model.edges){
-                let lines = makeLines(edge, vertices)
+        let lines = model.edges
+            .map( (edge) => makeLines(edge, vertices) )
+            .map( (lines) => clipLines(lines) )         // comment this line to disable clipping
+            .flat()
 
-                lines = clipLines(lines)
-
-                projectTo2d(lines, V, M)
-
-                drawLines(lines)
-        }
+        projectTo2d(lines, V, M)
+        drawLines(lines)
     }
 }
 
