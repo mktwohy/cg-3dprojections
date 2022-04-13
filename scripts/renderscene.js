@@ -100,7 +100,7 @@ function animate(timestamp) {
     let time = timestamp - start_time;
     
     // step 2: transform models based on time
-    //if ()
+
 
     // step 3: draw scene
     drawScene();
@@ -164,7 +164,6 @@ function drawScene() {
                 projectTo2d(lines, V, M)
 
                 drawLines(lines)
-        
         }
     }
 }

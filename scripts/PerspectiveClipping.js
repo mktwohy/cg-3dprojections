@@ -15,7 +15,6 @@ function clipLinePerspective(line) {
         return null
     }
 
-    // console.log("d")
     return investigateFurther(line, out0, out1)
 }
 
@@ -44,7 +43,7 @@ function outcodePerspective(vertex, z_min) {
 }
 
 /**
- *
+ * chooses which point of the line to clip, clips the point, and returns a new line
  * @param line {Line}
  * @param out0 {number}
  * @param out1 {number}
@@ -52,32 +51,35 @@ function outcodePerspective(vertex, z_min) {
  */
 function investigateFurther(line, out0, out1) {
     if (out0 !== 0) {
-        clipPointToViewVolume(line.p0, line.p1, out0)
+        return clipPointToViewVolume(line.p0, line.p1, out0)
     } else{
-        clipPointToViewVolume(line.p1, line.p0, out1)
+        return clipPointToViewVolume(line.p1, line.p0, out1)
     }
-
-    return line
 }
 
+/**
+ * @param clipPoint {Vector}
+ * @param otherPoint {Vector}
+ * @param outcode {number}
+ * @returns {Line} new Line after clipPoint has been clipped
+ */
 function clipPointToViewVolume(clipPoint, otherPoint, outcode) {
-    let line = new Line(clipPoint, otherPoint)
+    let line = new Line(clipPoint, copyVertex4(otherPoint))
 
     // attempt to clip against each edge
     for (let edge of [LEFT, RIGHT, BOTTOM, TOP, NEAR, FAR]) {
 
         // check if point's outcode
         if ((outcode & edge) !== 0) {
-            let intersection = findIntersectionPerspective(line, edge)
-            copyVertex4(line.p0, intersection)
+            line.p0 = findIntersectionPerspective(line, edge)
         }
     }
-    return line.p0
+    return line
 }
 
 /**
  *
- * @param line {Line} order of vertices matters - (clipPoint, otherPoint)
+ * @param line {Line} where p0 = clipPoint and
  * @param viewVolumeEdge {number} LEFT, RIGHT, BOTTOM, TOP, NEAR, FAR)
  */
 function findIntersectionPerspective(line, viewVolumeEdge) {
