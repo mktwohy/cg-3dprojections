@@ -1,3 +1,26 @@
+/**
+ * calls either mat4x4Nper or mat4x4Npar, depending on the current projection type
+ * @returns {Matrix}
+ */
+function mat4x4N(projectionType, prp, srp, vup, clip) {
+    if (projectionType === PERSPECTIVE){
+        return mat4x4Nper(prp, srp, vup, clip)
+    } else {
+        return mat4x4Npar(prp, srp, vup, clip)
+    }
+}
+
+/**
+ * calls either mat4x4Mper or mat4x4Mpar, depending on the current projection type
+ * @returns {Matrix}
+ */
+function mat4x4M(projectionType) {
+    if (projectionType === PERSPECTIVE){
+        return mat4x4Mper()
+    } else {
+        return mat4x4Mpar()
+    }
+}
 
 // create a 4x4 matrix to the parallel projection / view matrix
 function mat4x4Npar(prp, srp, vup, clip) {
@@ -35,8 +58,6 @@ function mat4x4Npar(prp, srp, vup, clip) {
 function mat4x4Nper(prp, srp, vup, clip) {
     let [left, right, bottom, top, near, far] = clip
 
-    let dop = Vector3((left + right)/2, (bottom + top)/2, -near);
-
     // 1. translate PRP to origin
     let T = mat4x4T(prp)
 
@@ -44,6 +65,7 @@ function mat4x4Nper(prp, srp, vup, clip) {
     let R = mat4x4R(prp, srp, vup)
 
     // 3. shear such that CW is on the z-axis
+    let dop = Vector3((left + right)/2, (bottom + top)/2, -near);
     let SHx = -(dop.x)/dop.z;
     let SHy = -(dop.y)/dop.z;
 

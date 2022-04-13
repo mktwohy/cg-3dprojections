@@ -1,13 +1,13 @@
 // Clip line - should either return a new line (with two endpoints inside view volume) or null (if line is completely outside view volume)
 function clipLineParallel(line) {
-    let p0 = vector4FromArray(line.p0.data);
-    let p1 = vector4FromArray(line.p1.data);
+    let p0 = line.p0
+    let p1 = line.p1
 
     let out0 = outcodeParallel(p0);
     let out1 = outcodeParallel(p1);
 
     if (canTrivialAccept(out0, out1)) {
-        return makeLine(p0, p1)
+        return line
     }
     if (canTrivialReject(out0, out1)) {
         return null
@@ -16,7 +16,7 @@ function clipLineParallel(line) {
     p0 = clipPointParallel(p0, out0)
     p1 = clipPointParallel(p1, out1)
 
-    return makeLine(p0, p1)
+    return new Line(p0, p1)
 }
 
 // Get outcode for vertex (parallel view volume)
