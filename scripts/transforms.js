@@ -144,6 +144,16 @@ function calcN(prp, srp, vup) {
     
     return n;
 }
+function calcV(prp, srp, vup) {
+    let n = prp.subtract(srp);
+    n.normalize();
+
+    let u = vup.cross(n);
+    u.normalize();
+
+    let v = n.cross(u);
+    return v
+}
 
 // set values of existing 4x4 matrix to the identity matrix
 function mat4x4Identity(mat4x4) {

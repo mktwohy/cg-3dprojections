@@ -40,12 +40,12 @@ function init() {
             {
                 type: 'generic',
                 vertices: [
-                    Vector4( 0,  0, -30, 1),
+                    Vector4(0,  0, -30, 1),
                     Vector4(20,  0, -30, 1),
                     Vector4(20, 12, -30, 1),
                     Vector4(10, 20, -30, 1),
-                    Vector4( 0, 12, -30, 1),
-                    Vector4( 0,  0, -60, 1),
+                    Vector4(0, 12, -30, 1),
+                    Vector4(0,  0, -60, 1),
                     Vector4(20,  0, -60, 1),
                     Vector4(20, 12, -60, 1),
                     Vector4(10, 20, -60, 1),
@@ -61,6 +61,27 @@ function init() {
                     [4, 9]
                 ],
                 matrix: new Matrix(4, 4)
+            },
+            {
+                type: 'generic',
+                vertices: [
+                    Vector4(0, 30, -40, 1),
+                    Vector4(0, 40, -40, 1) ,  
+                    Vector4(-10, 30, -40, 1),
+                    Vector4(-10, 40, -40, 1), 
+                    Vector4(0, 30, -50, 1),
+                    Vector4(0, 40, -50, 1), 
+                    Vector4(-10, 30, -50, 1),
+                    Vector4(-10, 40, -50, 1)
+                ],
+                edges: [
+                    [0,1,3, 2, 0],
+                    [4,5,7,6,4],
+                    [0,4], 
+                    [3,7], 
+                    [2,6],
+                    [1,5]
+                ]
             }
         ]
     };
@@ -155,11 +176,13 @@ function onKeyDown(event) {
     switch (event.keyCode) {
         case 37: // LEFT Arrow
             console.log("left");
+            let v = calcV(scene.view.prp, scene.view.srp, scene.view.vup);
             scene.view.prp.x += 1
             scene.view.srp.x += 1
             break;
         case 39: // RIGHT Arrow
             console.log("right");
+            let v0 = calcV(scene.view.prp, scene.view.srp, scene.view.vup);
             scene.view.prp.x -= 1
             scene.view.srp.x -= 1
             break;
@@ -192,11 +215,10 @@ function onKeyDown(event) {
             break;
         case 87: // W key
             console.log("W");
-            console.log("S");
             let n1 = calcN(scene.view.prp, scene.view.srp, scene.view.vup);
             let n0 = scene.view.prp.add(n1)
             let n2 = scene.view.srp.add(n1)
-            
+
             scene.view.prp = n0
             scene.view.srp = n2
             break;
