@@ -75,3 +75,15 @@ function zipWithNext(list) {
 
     return zipped
 }
+
+/**
+ * copy x, y, z, and w components from source to destination
+ * @param destination {Vector}
+ * @param source {Vector}
+ */
+function copyVertex4(destination, source) {
+    destination.x = source.x
+    destination.y = source.y
+    destination.z = source.z
+    destination.w = source.w
+}

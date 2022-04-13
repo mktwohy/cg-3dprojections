@@ -1,7 +1,7 @@
 /**
- * should either return a new line (with two endpoints inside view volume) or null (if line is completely outside view volume)
  * @param line {Line}
- * @returns {null|Line|*}
+ * @returns {null|Line|*} new line (with two endpoints inside view volume)
+ * or null (if line is completely outside view volume)
  */
 function clipLinePerspective(line) {
     let zMin = Math.min(line.p0.z, line.p1.z)
@@ -64,22 +64,28 @@ function clipPointToViewVolume(clipPoint, otherPoint, outcode) {
     let line = new Line(clipPoint, otherPoint)
 
     // attempt to clip against each edge
-    for (let edge of [LEFT, RIGHT, BOTTOM, TOP, FAR, NEAR]) {
+    for (let edge of [LEFT, RIGHT, BOTTOM, TOP, NEAR, FAR]) {
 
         // check if point's outcode
         if ((outcode & edge) !== 0) {
-            findIntersectionPerspective(line, edge)
+            let intersection = findIntersectionPerspective(line, edge)
+            copyVertex4(line.p0, intersection)
         }
     }
     return line.p0
 }
 
-function findIntersectionPerspective(line, edge) {
+/**
+ *
+ * @param line {Line} order of vertices matters - (clipPoint, otherPoint)
+ * @param viewVolumeEdge {number} LEFT, RIGHT, BOTTOM, TOP, NEAR, FAR)
+ */
+function findIntersectionPerspective(line, viewVolumeEdge) {
     let [deltaX, deltaY, deltaZ] = calcDeltas3D(line)
     let zMin = Math.min(line.p0.z, line.p1.z)
     let x, y, z, t
 
-    switch(edge) {
+    switch(viewVolumeEdge) {
         case LEFT:
             t = -(line.p0.x + line.p0.z) / (deltaX - deltaZ)
             z = parametricXYZ(line.p0.z, line.p1.z, t)
@@ -120,8 +126,5 @@ function findIntersectionPerspective(line, edge) {
             x = 0; y = 0; z = 0
     }
 
-    line.p0.x = x
-    line.p0.y = y
-    line.p0.z = z
-    line.p0.w = 1
+    return new Vector4(x, y, z, 1)
 }

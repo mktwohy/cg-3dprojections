@@ -126,11 +126,13 @@ function drawScene() {
     for (let model of scene.models){
         // copy vertices and multiply each one by N
         let vertices = model.vertices.map( (vertex) =>
-            N.mult(vertex)
+            vector4FromMatrix(N.mult(vertex))
         )
 
         for (let edge of model.edges){
-            let lines = clipLines(makeLines(edge, vertices))
+            let lines = makeLines(edge, vertices)
+
+            lines = clipLines(lines)
 
             projectTo2d(lines, V, M)
 
@@ -145,8 +147,8 @@ function drawScene() {
  */
 function drawLines(lines) {
     for (let line of lines) {
-        let p0 = vector4FromMatrix(line.p0)
-        let p1 = vector4FromMatrix(line.p1)
+        let p0 = line.p0
+        let p1 = line.p1
         drawLine(p0.x/p0.w, p0.y/p0.w, p1.x/p1.w, p1.y/p1.w)
     }
 }
@@ -189,10 +191,7 @@ function clipLines(lines) {
  */
 function makeLines(edge, vertices){
     return zipWithNext(edge).map( (indexPair) =>
-        new Line(
-            vector4FromMatrix(vertices[indexPair[0]]),
-            vector4FromMatrix(vertices[indexPair[1]])
-        )
+        new Line(vertices[indexPair[0]], vertices[indexPair[1]])
     )
 }
 
