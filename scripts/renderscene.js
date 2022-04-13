@@ -66,7 +66,9 @@ function init() {
                 center: [4, 4, -10],
                 width: 8,
                 height: 8,
-                depth: 8
+                depth: 8,
+                vertices: [],
+                edges: []
             }/*,
             {
                 type: "cylinder",
@@ -111,27 +113,17 @@ function animate(timestamp) {
 }
 //centerPoint, width, height, depth
 function setCube(centerPoint, width, height, depth) {
-    let vertices;
-    vertices: [Vector4(0, 30, -40, 1), Vector4(0, 40, -40, 1),  
+    let vertices1= [Vector4(0, 30, -40, 1), Vector4(0, 40, -40, 1),  
         Vector4(-10, 30, -40, 1),
         Vector4(-10, 40, -40, 1), 
         Vector4(0, 30, -50, 1),
         Vector4(0, 40, -50, 1), 
         Vector4(-10, 30, -50, 1),
         Vector4(-10, 40, -50, 1)];
-    /*
-    vertices[0] = Vector4(0, 30, -40, 1);
-    scene.models.vertices[1] = Vector4(0, 40, -40, 1);
-    scene.models.vertices[2] = Vector4(-10, 30, -40, 1);
-    scene.models.vertices[3] = Vector4(-10, 40, -40, 1);
-    scene.models.vertices[4] = Vector4(0, 30, -50, 1);
-    scene.models.vertices[5] = Vector4(0, 40, -50, 1);
-    scene.models.vertices[6] = Vector4(-10, 30, -50, 1)
-    scene.models.vertices[7] = Vector4(-10, 40, -50, 1)
-    */
-    let edges;
-    edges: [0, 1, 2, 3, 4, 0];
-    let model = [vertices][edges]
+    scene.models.vertices = vertices1;
+    
+    let edges1 = [[0, 1], [1,3]];
+    scene.models.edges = edges1;
 
     /*
     edge[0] = vertices[0];
@@ -149,7 +141,6 @@ function drawScene() {
     // console.log("CALL: drawScene()")
     // console.log("SCENE: ", scene);
     //loadNewScene();
-    setCube();
 
     //need to add the clear screen call
 
