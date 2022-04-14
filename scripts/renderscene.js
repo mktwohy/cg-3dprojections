@@ -75,14 +75,14 @@ function init() {
                 center: Vector3(-100, 60, -45),
                 radius: 15,
                 height: 25,
-                sides: 24
+                sides: 50
             },
             {
                 type: "cylinder",
                 center: Vector3(-80, 45, -80),
                 radius: 20,
                 height: 20,
-                sides: 12,
+                sides: 50,
                 matrix: new Matrix(4, 4)
             }
 
@@ -174,8 +174,6 @@ function setCone(model, centerPoint, radius, height, sides) {
     model.edges = coneedges;
 
 }
-
-
 
 function setCylinder(model, centerPoint, radius, height, sides) {
     let degrees1 = (360/sides);
