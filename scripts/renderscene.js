@@ -242,7 +242,7 @@ function drawScene() {
         }
 
         let vertices = model.vertices.map((vertex) =>
-            vector4FromMatrix(Matrix.multiply([model.matrix, N, vertex]))
+            vector4FromMatrix(N.mult(vertex))
         )
 
         let lines = model.edges
@@ -329,7 +329,7 @@ function onKeyDown(event) {
             //move prp to origin 
             let T1 = mat4x4T(scene.view.prp);
             //rotate the VRC such that (u,v,n) align with (x,y,z)
-            let R = mat4x4R(prp, srp, vup)
+            let R = mat4x4R(scene.view.prp, scene.view.srp, scene.view.vup)
 
             let origin = R.mult(T1);
             
