@@ -67,7 +67,8 @@ function init() {
                 center: Vector3(-5, 45, -80),
                 width: 10,
                 height: 10,
-                depth: 10
+                depth: 10,
+                matrix: new Matrix(4, 4)
             }, 
             {
                 type: "cone",
@@ -82,15 +83,16 @@ function init() {
                 radius: 20,
                 height: 20,
                 sides: 12,
-                animation: {
-                    axis: 'y',
-                    rps: 0.5
-                }
+                matrix: new Matrix(4, 4)
             }
 
 
         ]
     };
+
+    // for (let model of scene.models) {
+    //     mat4x4Identity(model.matrix)
+    // }
 
     // event handler for pressing arrow keys
     document.addEventListener('keydown', onKeyDown, false);
@@ -116,7 +118,7 @@ function animate(timestamp) {
     // step 4: request next animation frame (recursively calling same function)
     // (may want to leave commented out while debugging initially)
     // setTimeout( () => window.requestAnimationFrame(animate), 1000)   // used for slowing down console input
-    window.requestAnimationFrame(animate)
+    // window.requestAnimationFrame(animate)
 
 }
 //centerPoint, width, height, depth
@@ -188,7 +190,7 @@ function setCylinder(model, centerPoint, radius, height, sides) {
     cylvertices.push(b)
     let placeHolder1;
     let topcount = 0;
-    let bottomcount =1; 
+    let bottomcount =1;
     for (let k = 1; k <= sides; k++) {
         newAngle1 += degrees1;
         if (newAngle1>= 360) {
@@ -197,7 +199,7 @@ function setCylinder(model, centerPoint, radius, height, sides) {
         placeHolder1 = Vector4((centerPoint.x + (radius * Math.cos(newAngle1 * Math.PI / 180))), centery1, (centerPoint.z + (radius * Math.sin(newAngle1* Math.PI / 180))), 1);
         cylvertices.push(placeHolder1)
         cyledges.push([topcount, topcount+2])
-        
+
 
         placeHolder1 = Vector4((centerPoint.x + (radius * Math.cos(newAngle1 * Math.PI / 180))), centery2, (centerPoint.z + (radius * Math.sin(newAngle1* Math.PI / 180))), 1);
         cylvertices.push(placeHolder1)
@@ -224,8 +226,7 @@ function drawScene() {
     // console.log("SCENE: ", scene);
     //loadNewScene();
 
-    //need to add the clear screen call
-    ctx.clearRect(0,0, view.width, view.height);
+    clearScreen()
 
     let N = mat4x4N(scene.view.type, scene.view.prp, scene.view.srp, scene.view.vup, scene.view.clip)
     let M = mat4x4M(scene.view.type)
@@ -234,24 +235,23 @@ function drawScene() {
     for (let model of scene.models){
         if(model.type === "cube") {
             setCube(model, model.center, model.width, model.height, model.depth);
-        } else if(model.type == "cone") {
+        } else if(model.type === "cone") {
             setCone(model, model.center, model.radius, model.height, model.sides);
-        } else if(model.type == "cylinder") {
+        } else if(model.type === "cylinder") {
             setCylinder(model, model.center, model.radius, model.height, model.sides);
         }
-        let vertices = model.vertices.map((vertex) => 
-            vector4FromMatrix(N.mult(vertex))
+
+        let vertices = model.vertices.map((vertex) =>
+            vector4FromMatrix(Matrix.multiply([model.matrix, N, vertex]))
         )
 
-        for (let edge of model.edges){
-                let lines = makeLines(edge, vertices)
+        let lines = model.edges
+            .map( (edge) => makeLines(edge, vertices) )
+            .map( (lines) => clipLines(lines) )         // comment this line to disable clipping
+            .flat()
 
-                lines = clipLines(lines)
-
-                projectTo2d(lines, V, M)
-
-                drawLines(lines)
-        }
+        projectTo2d(lines, V, M)
+        drawLines(lines)
     }
 }
 
@@ -305,14 +305,22 @@ function clipLines(lines) {
  */
 function makeLines(edge, vertices){
     return zipWithNext(edge).map( (indexPair) =>
-        new Line(
-            copyVertex4(vertices[indexPair[0]]),
-            copyVertex4(vertices[indexPair[1]])
-        )
+        new Line(vertices[indexPair[0]], vertices[indexPair[1]])
     )
 }
 
-// Called when user presses a key on the keyboard down 
+function clearScreen(){
+    ctx.clearRect(0,0, view.width, view.height);
+}
+
+// function rotateModel(model, theta) {
+//     console.log("rotate")
+//     model.center.normalize()
+//     mat4x4RotateFromAxisAndAngle(model.matrix, model.center, theta)
+// }
+//
+// let theta = 1
+// Called when user presses a key on the keyboard down
 function onKeyDown(event) {
     switch (event.keyCode) {
         case 37: // LEFT Arrow
@@ -377,6 +385,10 @@ function onKeyDown(event) {
             scene.view.prp = n0
             scene.view.srp = n2
             break;
+        // case 82: // R key
+        //     theta += 1
+        //     rotateModel(scene.models[1], theta)
+        //     break
     }
     drawScene();
 }

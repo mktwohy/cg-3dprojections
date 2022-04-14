@@ -69,7 +69,7 @@ function investigateFurther(line, out0, out1) {
  * @returns {Line} new Line after clipPoint has been clipped
  */
 function clipPointToViewVolume(clipPoint, otherPoint, outcode) {
-    let line = new Line(clipPoint, copyVertex4(otherPoint))
+    let line = new Line(copyVertex4(clipPoint), copyVertex4(otherPoint))
 
     // attempt to clip against each edge
     for (let edge of [LEFT, RIGHT, BOTTOM, TOP, NEAR, FAR]) {
