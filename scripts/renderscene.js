@@ -232,12 +232,16 @@ function drawScene() {
 
 
     for (let model of scene.models){
-        if(model.type === "cube") {
-            setCube(model, model.center, model.width, model.height, model.depth);
-        } else if(model.type === "cone") {
-            setCone(model, model.center, model.radius, model.height, model.sides);
-        } else if(model.type === "cylinder") {
-            setCylinder(model, model.center, model.radius, model.height, model.sides);
+        switch (model.type) {
+            case "cube":
+                setCube(model, model.center, model.width, model.height, model.depth);
+                break
+            case "cone":
+                setCone(model, model.center, model.radius, model.height, model.sides);
+                break
+            case "cylinder":
+                setCylinder(model, model.center, model.radius, model.height, model.sides);
+                break
         }
 
         let vertices = model.vertices.map((vertex) =>
