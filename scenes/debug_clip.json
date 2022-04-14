@@ -1,15 +1,15 @@
 {
     "view": {
         "type": "perspective",
-        "prp": [10, 10, 5],
-        "srp": [10, 10, -30],
+        "prp": [0, 0, 10],
+        "srp": [0, 0, 0],
         "vup": [0, 1, 0],
-        "clip": [-11, 11, -11, 11, 5, 100]
+        "clip": [-4, 20, -1, 17, 5, 75]
     },
     "models": [
         {
             "type": "cube",
-            "center": [4, 4, -10],
+            "center": [0, 0, 0],
             "width": 8,
             "height": 8,
             "depth": 8

@@ -178,6 +178,25 @@ function calcV(prp, srp, vup) {
     return v
 }
 
+// /**
+//  *
+//  * @param mat4x4 {Matrix}
+//  * @param u {Vector} normalized vector that represents the axis
+//  * @param theta
+//  * @return {Matrix}
+//  */
+// function mat4x4RotateFromAxisAndAngle(mat4x4, u, theta) {
+//     let ct = Math.cos(theta)
+//     let st = Math.sin(theta)
+//
+//     mat4x4.values = [
+//         [ct + u.x**2 * (1 - ct),            u.x * u.y * (1 - ct) - u.z * st,    u.x * u.z * (1 - ct) + u.y * st,    0],
+//         [u.y * u.x * (1 - ct) + u.z * st,   ct + u.y**2 * (1 - ct),             u.y * u.z * (1 - ct) - u.x * st,    0],
+//         [u.z * u.x * (1 - ct) - u.y * st,   u.z * u.y * (1 - ct) + u.x * st,    ct + u.z**2 * (1 - ct),             0],
+//         [0,                                 0,                                  0,                                  1]
+//     ]
+// }
+
 // set values of existing 4x4 matrix to the identity matrix
 function mat4x4Identity(mat4x4) {
     mat4x4.values = [
