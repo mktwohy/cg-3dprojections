@@ -40,15 +40,20 @@
             "depth": 10
         },
         {
+            "type": "cone",
+            "center": [75, 80, -80],
+            "radius": 10,
+            "height": 20,
+            "sides": 12
+            
+        },
+        {
             "type": "cylinder",
-            "center": [12, 10, -49],
-            "radius": 1.5,
-            "height": 5,
-            "sides": 12,
-            "animation": {
-                "axis": "y",
-                "rps": 0.5
-            }
+            "center": [10, 80, -80],
+            "radius": 10,
+            "height": 20,
+            "sides": 12
+            
         }
     ]
 }
