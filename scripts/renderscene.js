@@ -173,6 +173,8 @@ function setCone(model, centerPoint, radius, height, sides) {
 
 }
 
+
+
 function setCylinder(model, centerPoint, radius, height, sides) {
     let degrees1 = (360/sides);
     let newAngle1 = 0;
@@ -228,7 +230,6 @@ function drawScene() {
     let N = mat4x4N(scene.view.type, scene.view.prp, scene.view.srp, scene.view.vup, scene.view.clip)
     let M = mat4x4M(scene.view.type)
     let V = mat4x4V(view.width, view.height)
-
 
     for (let model of scene.models){
         if(model.type === "cube") {
